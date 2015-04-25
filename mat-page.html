@@ -1,0 +1,163 @@
+<!--
+@license
+Copyright (c) 2015 The expand.js authors. All rights reserved.
+This code may only be used under the BSD style license found at https://expandjs.github.io/LICENSE.txt
+The complete set of authors may be found at https://expandjs.github.io/AUTHORS.txt
+The complete set of contributors may be found at https://expandjs.github.io/CONTRIBUTORS.txt
+-->
+
+<!--
+This component is used to display a material page.
+It must be used in conjunction with mat-pages.
+
+@component mat-page
+@description This component is used to display a material page.
+
+@dependency polymer Polymer/polymer#^0.5
+@dependency expandjs ExpandJS/expandjs
+@dependency mat-paper ExpandJS/mat-paper
+@dependency xp-pages ExpandJS/xp-pages
+@dependency xp-slave-state ExpandJS/xp-slave-state
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../expandjs/expandjs.html">
+<link rel="import" href="../mat-paper/mat-paper.html">
+<link rel="import" href="../xp-pages/xp-page.html">
+<link rel="import" href="../xp-slave-state/xp-slave-state.html">
+
+<polymer-element name="mat-page" constructor="MATPageElement" attributes="active background closable content data injected">
+
+    <template>
+        <style>
+            :host {
+                display: block;
+                height: 100%;
+                overflow: visible;
+
+                /* FLEX */
+                -ms-flex: 1 1 0.000000001px;
+                -webkit-flex: 1;
+                -webkit-flex-basis: 0.000000001px;
+                flex: 1;
+                flex-basis: 0.000000001px;
+            }
+        </style>
+        <template context="{{}}" is="xp-slave-state" master="{{selector}}" masterTag="mat-pages"></template>
+        <xp-page context="{{}}" id="matPageAdaptee" active="{{active}}" closable="{{closable}}" content="{{content}}" data="{{data}}" injected="{{injected}}">
+            <mat-paper id="matPageWrapper" background="{{background}}" fit>
+                <content id="content"></content>
+            </mat-paper>
+        </xp-page>
+    </template>
+
+    <script>
+        XPComponent({
+
+            // DELEGATES
+            eventDelegates: {
+                'xp-slave': 'handleSlave'
+            },
+
+            // OBSERVE
+            observe: {
+                'selector.indexAttribute': 'indexAttributeObserver'
+            },
+
+            // PUBLISH
+            publish: {
+
+                /**
+                 * If set to true, the page is active.
+                 *
+                 * @attribute active
+                 * @type boolean
+                 * @default false
+                 */
+                active: {reflect: true, value: false},
+
+                /**
+                 * The paper's background color.
+                 *
+                 * @attribute background
+                 * @type string
+                 * @default ""
+                 */
+                background: {reflect: true, value: ''},
+
+                /**
+                 * If set to true, the page can be closed.
+                 *
+                 * @attribute closable
+                 * @type boolean
+                 * @default false
+                 * @readonly
+                 */
+                closable: {reflect: true, value: false},
+
+                /**
+                 * The `tagName` of the page's element to be injected.
+                 *
+                 * @attribute content
+                 * @type string
+                 * @default ""
+                 */
+                content: {reflect: true, value: ''},
+
+                /**
+                 * The element's data
+                 *
+                 * @attribute data
+                 * @type *
+                 */
+                data: {reflect: false, value: null},
+
+                /**
+                 * The page's injected element.
+                 *
+                 * @attribute injected
+                 * @type Element
+                 * @readonly
+                 */
+                injected: {reflect: false, value: null}
+            },
+
+            /**
+             * The master selector.
+             *
+             * @property selector
+             * @type Element
+             * @readonly
+             */
+            selector: null,
+
+            /*********************************************************************/
+
+            // OBSERVER
+            indexAttributeObserver: function () {
+                var self = this;
+                if (self.attributesObserver) { self.attributesObserver.disconnect(); }
+                self.mutated();
+            },
+
+            /*********************************************************************/
+
+            // LISTENER
+            mutated: function () {
+                var self = this, attribute = self.selector.indexAttribute;
+                XP.setAttribute(self.$.matPageAdaptee, attribute, self.getAttribute(attribute));
+                self.attributesObserver = attribute ? XP.onMutation(self, self.mutated.bind(self), {attributes: true, attributeFilter: [attribute]}) : null;
+            },
+
+            /*********************************************************************/
+
+            // HANDLER
+            handleSlave: function (event) {
+                var self = this;
+                if (self === event.detail.firer || event.detail.selector !== 'mat-pages' || !XP.matches(event.detail.firer, 'mat-page')) { return; }
+                event.stopPropagation();
+            }
+        });
+    </script>
+
+</polymer-element>

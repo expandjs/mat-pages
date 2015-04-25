@@ -1,0 +1,304 @@
+<!--
+@license
+Copyright (c) 2015 The expand.js authors. All rights reserved.
+This code may only be used under the BSD style license found at https://expandjs.github.io/LICENSE.txt
+The complete set of authors may be found at https://expandjs.github.io/AUTHORS.txt
+The complete set of contributors may be found at https://expandjs.github.io/CONTRIBUTORS.txt
+-->
+
+<!--
+This component is used to manage material pages.
+It must be used in conjunction with mat-page.
+
+@component mat-pages
+@description This component is used to manage material pages.
+
+@dependency polymer Polymer/polymer#^0.5
+@dependency expandjs ExpandJS/expandjs
+@dependency mat-paper ExpandJS/mat-paper
+@dependency xp-master-state ExpandJS/xp-master-state
+@dependency xp-pages ExpandJS/xp-pages
+
+@devDependency mat-demo ExpandJS/mat-demo
+@devDependency mat-tabs ExpandJS/mat-tabs
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../expandjs/expandjs.html">
+<link rel="import" href="../mat-paper/mat-paper.html">
+<link rel="import" href="../xp-master-state/xp-master-state.html">
+<link rel="import" href="../xp-pages/xp-pages.html">
+<link rel="import" href="mat-page.html">
+
+<polymer-element name="mat-pages" constructor="MATPagesElement" attributes="animated defaultSelected indexAttribute onDemand pages priorSelected selected selection">
+
+    <template>
+        <style>
+            :host {
+                display: block;
+                overflow: hidden;
+
+                /* FIT */
+                bottom: 0;
+                left: 0;
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
+
+            :host #matPagesAdaptee {
+                right: auto;
+                transition: transform .33s;
+                width: 100%;
+                will-change: transform;
+            }
+
+            :host([animated]) #matPagesAdaptee ::content > mat-page::shadow #matPageAdaptee {
+                display: block !important;
+            }
+        </style>
+        <template context="{{}}" is="xp-master-state" id="xpMasterState" slaves="{{pages}}" slaveTag="mat-page"></template>
+        <xp-pages context="{{}}" id="matPagesAdaptee" defaultSelected="{{defaultSelected}}" indexAttribute="{{indexAttribute}}" onDemand="{{onDemand}}" priorSelected="{{priorSelected}}" selected="{{selected}}" horizontal layout>
+            <content id="content"></content>
+        </xp-pages>
+    </template>
+
+    <script>
+        XPComponent({
+
+            /**
+             * Closes a page.
+             *
+             * @method close
+             * @param {number | string} index
+             * @returns {Element | undefined}
+             */
+            close: function (index) {
+                var self = this, page = self.$.matPagesAdaptee.close(index);
+                return page && self.$.xpMasterState.removeSlave(page.context);
+            },
+
+            /**
+             * Finds a page.
+             *
+             * @method findPage
+             * @param {number | string} index
+             * @returns {Element | undefined}
+             */
+            findPage: function (index) {
+                var self = this, page = self.$.matPagesAdaptee.findPage(index);
+                return page && page.context;
+            },
+
+            /**
+             * Checks if a page is selectable.
+             *
+             * @method isSelectable
+             * @param {number | string} index
+             * @returns {boolean}
+             */
+            isSelectable: function (index) {
+                return this.$.matPagesAdaptee.isSelectable(index);
+            },
+
+            /**
+             * Checks if a page is selected.
+             *
+             * @method isSelected
+             * @param {number | string} index
+             * @returns {boolean}
+             */
+            isSelected: function (index) {
+                return this.$.matPagesAdaptee.isSelected(index);
+            },
+
+            /**
+             * Opens a page.
+             *
+             * @method open
+             * @param {Object} [properties]
+             * @returns {Element}
+             */
+            open: function (properties) {
+                return this.$.xpMasterState.appendSlave(XP.assign({}, properties, {closable: true}));
+            },
+
+            /**
+             * Selects a page.
+             *
+             * @method select
+             * @param {number | string} index
+             * @returns {Element | undefined}
+             */
+            select: function (index) {
+                return this.$.matPagesAdaptee.select(index);
+            },
+
+            /**
+             * Selects the prior selected page.
+             *
+             * @method selectPriorSelected
+             * @returns {Element | undefined}
+             */
+            selectPriorSelected: function () {
+                return this.$.matPagesAdaptee.selectPriorSelected();
+            },
+
+            /**
+             * Selects the next page.
+             *
+             * @method selectNext
+             * @returns {Element | undefined}
+             */
+            selectNext: function () {
+                return this.$.matPagesAdaptee.selectNext();
+            },
+
+            /**
+             * Selects the previous page.
+             *
+             * @method selectPrevious
+             * @returns {Element | undefined}
+             */
+            selectPrevious: function () {
+                return this.$.matPagesAdaptee.selectPrevious();
+            },
+
+            /*********************************************************************/
+
+            /**
+             * Animates the pages.
+             *
+             * @method animate
+             * @returns {Element}
+             * @private
+             */
+            animate: function() {
+
+                // Vars
+                var self  = XP.assign(this, {animated: true}),
+                    index = XP.indexOf(self.pages, self.selection) || 0;
+
+                // Styling
+                XP.setStyle(self.$.matPagesAdaptee, 'transform', 'translateX(' + (index && (-index * 100 / self.pages.length)) + '%)');
+
+                // Animating
+                self.jobAnimation();
+
+                return self;
+            },
+
+            /*********************************************************************/
+
+            // OBSERVE
+            observe: {
+                'selection': 'animate',
+                '$.matPagesAdaptee.selection': 'selectionObserver'
+            },
+
+            // PUBLISH
+            publish: {
+
+                /**
+                 * If set to true, the animation is running.
+                 *
+                 * @attribute animated
+                 * @type boolean
+                 * @default false
+                 * @readonly
+                 */
+                animated: {reflect: true, value: false},
+
+                /**
+                 * The name of the page selected by default.
+                 *
+                 * @attribute defaultSelected
+                 * @type number | string
+                 */
+                defaultSelected: {reflect: false, value: null},
+
+                /**
+                 * The attribute used as index.
+                 *
+                 * @attribute indexAttribute
+                 * @type string
+                 * @default ""
+                 */
+                indexAttribute: {reflect: true, value: ''},
+
+                /**
+                 * If set to true, the pages content will load only when active.
+                 *
+                 * @attribute onDemand
+                 * @type string
+                 * @default ""
+                 */
+                onDemand: {reflect: true, value: false},
+
+                /**
+                 * The slave pages.
+                 *
+                 * @attribute pages
+                 * @type Array
+                 * @readonly
+                 */
+                pages: {reflect: false, value: null},
+
+                /**
+                 * The prior selected page's index.
+                 *
+                 * @attribute priorSelected
+                 * @type string
+                 * @readonly
+                 */
+                priorSelected: {reflect: false, value: null},
+
+                /**
+                 * The selected page's name.
+                 *
+                 * @attribute routes
+                 * @type string
+                 */
+                selected: {reflect: false, value: null},
+
+                /**
+                 * The selected page.
+                 *
+                 * @attribute selection
+                 * @type Element
+                 * @readonly
+                 */
+                selection: {reflect: false, value: null}
+            },
+
+            /**
+             * The debounced animation job.
+             *
+             * @property jobAnimation
+             * @type Function
+             * @private
+             */
+            jobAnimation: null,
+
+            /*********************************************************************/
+
+            // OBSERVER
+            pagesChanged: function () {
+                XP.setStyle(this.$.matPagesAdaptee, 'width', (this.pages.length * 100) + '%');
+            },
+
+            // OBSERVER
+            selectionObserver: function (pre, post) {
+                if (arguments.length > 1) { this.selection = post && post.context; }
+            },
+
+            /*********************************************************************/
+
+            // LISTENER
+            created: function () {
+                this.jobAnimation = XP.debounce(function () { this.animated = false; }, 330);
+            }
+        });
+    </script>
+
+</polymer-element>
