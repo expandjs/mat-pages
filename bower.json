@@ -2,7 +2,7 @@
   "name": "mat-pages",
   "license": "BSD-3-Clause",
   "version": "0.8.0",
-  "description": "This component is used to manage material pages.",
+  "description": "This element is used to manage material pages.",
   "authors": [
     "Giuliano Rullo <g.rullo@expandjs.com>",
     "Maurizio Stefàno <m.stefano@expandjs.com>",
