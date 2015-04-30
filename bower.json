@@ -1,8 +1,8 @@
 {
   "name": "mat-pages",
   "license": "BSD-3-Clause",
-  "version": "0.8.4",
-  "description": "This element is used to manage material pages.",
+  "version": "0.8.5",
+  "description": "A custom element used to manage a series of Material Design pages",
   "homepage": "http://www.expandjs.com/elements/mat-pages",
   "authors": [
     "Giuliano Rullo <g.rullo@expandjs.com>",
