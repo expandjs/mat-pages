@@ -56,6 +56,20 @@ It must be used in conjunction with mat-pages.
     <script>
         XPElement({
 
+            /**
+             * Fired when the slave is attached.
+             *
+             * @event xp-slave
+             * @param {Element} firer
+             * @param {Element} slave
+             * @param {string} masterSelector
+             * @param {string} masterTag
+             * @param {boolean} isAttached
+             * @bubbles
+             */
+
+            /*********************************************************************/
+
             // DELEGATES
             eventDelegates: {
                 'xp-slave': 'handleSlave'
