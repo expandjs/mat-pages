@@ -39,7 +39,7 @@ It must be used in conjunction with mat-pages.
             :host {
                 display: block;
                 height: 100%;
-                overflow: visible;
+                overflow: auto;
 
                 /* FLEX */
                 -ms-flex: 1 1 0.000000001px;
@@ -48,10 +48,17 @@ It must be used in conjunction with mat-pages.
                 flex: 1;
                 flex-basis: 0.000000001px;
             }
+
+            :host #matPageAdaptee,
+            :host #matPageWrapper {
+                height: auto;
+                min-height: 100%;
+                overflow: hidden;
+            }
         </style>
         <template context="{{}}" is="xp-slave-state" master="{{selector}}" masterTag="mat-pages"></template>
         <xp-page context="{{}}" id="matPageAdaptee" active="{{active}}" closable="{{closable}}" content="{{content}}" data="{{data}}" injected="{{injected}}">
-            <mat-paper id="matPageWrapper" background="{{background}}" fit>
+            <mat-paper id="matPageWrapper" background="{{background}}">
                 <content id="content"></content>
             </mat-paper>
         </xp-page>
