@@ -51,17 +51,16 @@ It must be used in conjunction with mat-pages.
 
             :host #matPageAdaptee,
             :host #matPageWrapper {
-                height: 100%;
+                height: auto;
                 min-height: 100%;
-                overflow: hidden;
             }
         </style>
         <template context="{{}}" is="xp-slave-state" master="{{selector}}" masterTag="mat-pages"></template>
-        <xp-page context="{{}}" id="matPageAdaptee" active="{{active}}" closable="{{closable}}" content="{{content}}" data="{{data}}" injected="{{injected}}">
-            <mat-paper id="matPageWrapper" background="{{background}}">
+        <mat-paper id="matPageWrapper" background="{{background}}">
+            <xp-page context="{{}}" id="matPageAdaptee" active="{{active}}" closable="{{closable}}" content="{{content}}" data="{{data}}" injected="{{injected}}">
                 <content id="content"></content>
-            </mat-paper>
-        </xp-page>
+            </xp-page>
+        </mat-paper>
     </template>
 
     <script>
