@@ -77,8 +77,19 @@ It must be used in conjunction with mat-page.
              * @returns {Element | undefined}
              */
             close: function (index) {
-                var self = this, page = self.$.matPagesAdaptee.close(index);
-                return page && self.$.xpMasterState.removeSlave(page.context);
+
+                // Vars
+                var self = this,
+                    page = self.findPage(index);
+
+                // Checking
+                if (!page || !page.closable) { return; }
+
+                // Selecting
+                self.$.matPagesAdaptee.close(index);
+
+                // Removing
+                return self.$.xpMasterState.removeSlave(page);
             },
 
             /**
@@ -89,8 +100,18 @@ It must be used in conjunction with mat-page.
              * @returns {Element | undefined}
              */
             findPage: function (index) {
-                var self = this, page = self.$.matPagesAdaptee.findPage(index);
-                return page && page.context;
+                return (this.$.matPagesAdaptee.findPage(index) || {}).context;
+            },
+
+            /**
+             * Returns a page's index.
+             *
+             * @method indexOf
+             * @param {Element} page
+             * @returns {number | string | undefined}
+             */
+            indexOf: function (page) {
+                return XP.includes(this.pages, page) ? this.$.matPagesAdaptee.findIndex(page.$.matPageAdaptee) : undefined;
             },
 
             /**

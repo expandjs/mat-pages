@@ -179,9 +179,7 @@ It must be used in conjunction with mat-pages.
 
             // HANDLER
             handleSlave: function (event) {
-                var self = this;
-                if (self === event.detail.firer || event.detail.selector !== 'mat-pages' || !XP.matches(event.detail.firer, 'mat-page')) { return; }
-                event.stopPropagation();
+                if (this !== event.detail.firer && event.detail.masterTag === 'mat-pages' && XP.matches(event.detail.firer, 'mat-page')) { event.stopPropagation(); }
             }
         });
     </script>
