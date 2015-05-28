@@ -52,7 +52,8 @@ It must be used in conjunction with mat-page.
 
             :host #matPagesAdaptee {
                 right: auto;
-                transition: transform .33s;
+                -webkit-transition: -webkit-transform 0.33s;
+                transition: transform 0.33s;
                 width: 100%;
                 will-change: transform;
             }
@@ -208,6 +209,7 @@ It must be used in conjunction with mat-page.
                     index = XP.indexOf(self.pages, self.selection) || 0;
 
                 // Styling
+                XP.setStyle(self.$.matPagesAdaptee, '-webkit-transform', 'translateX(' + (index && (-index * 100 / self.pages.length)) + '%)');
                 XP.setStyle(self.$.matPagesAdaptee, 'transform', 'translateX(' + (index && (-index * 100 / self.pages.length)) + '%)');
 
                 // Animating
