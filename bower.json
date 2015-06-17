@@ -1,0 +1,40 @@
+{
+  "name": "mat-pages",
+  "license": "BSD-3-Clause",
+  "version": "0.9.0",
+  "description": "A custom element used to manage a series of Material Design pages",
+  "homepage": "http://expandjs.com/elements/mat-pages",
+  "authors": [
+    "Giuliano Rullo <g.rullo@expandjs.com>",
+    "Maurizio Stefàno <m.stefano@expandjs.com>",
+    "Robert Manolea <r.manolea@expandjs.com>"
+  ],
+  "keywords": [
+    "material design",
+    "material pages",
+    "web app",
+    "html5",
+    "expandjs",
+    "web-components"
+  ],
+  "main": [
+    "mat-page.html",
+    "mat-pages.html"
+  ],
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "expandjs": "ExpandJS/expandjs",
+    "mat-paper": "ExpandJS/mat-paper",
+    "xp-master-state": "ExpandJS/xp-master-state",
+    "xp-pages": "ExpandJS/xp-pages",
+    "xp-slave-state": "ExpandJS/xp-slave-state",
+    "polymer": "Polymer/polymer",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout"
+  },
+  "devDependencies": {
+    "mat-demo": "ExpandJS/mat-demo",
+    "mat-tabs": "ExpandJS/mat-tabs"
+  }
+}

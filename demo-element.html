@@ -1,0 +1,41 @@
+<link rel="import" href="../mat-demo/mat-demo.html">
+<link rel="import" href="../mat-tabs/mat-tabs.html">
+<link rel="import" href="mat-pages.html">
+
+<dom-module id="mat-pages-demo">
+
+    <style>
+        :host .demo-container {
+            height: 256px;
+            line-height: 256px;
+            position: relative;
+        }
+    </style>
+
+    <template>
+        <mat-demo label="mat-pages">
+
+            <div class="demo-title">Default</div>
+            <mat-tabs target="demoPages">
+                <mat-tab label="First tab"></mat-tab>
+                <mat-tab label="Second tab"></mat-tab>
+                <mat-tab label="Third tab"></mat-tab>
+            </mat-tabs>
+            <mat-pages id="demoPages" class="demo-container">
+                <mat-page background="light-blue">First page</mat-page>
+                <mat-page background="orange">Second page</mat-page>
+                <mat-page background="green">Third page</mat-page>
+            </mat-pages>
+
+        </mat-demo>
+    </template>
+
+    <script>
+        Polymer({
+
+            // ELEMENT
+            is: 'mat-pages-demo'
+        });
+    </script>
+
+</dom-module>

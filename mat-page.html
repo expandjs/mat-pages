@@ -1,0 +1,212 @@
+<!--
+@license
+Copyright (c) 2015 The ExpandJS authors. All rights reserved.
+This code may only be used under the BSD style license found at https://expandjs.github.io/LICENSE.txt
+The complete set of authors may be found at https://expandjs.github.io/AUTHORS.txt
+The complete set of contributors may be found at https://expandjs.github.io/CONTRIBUTORS.txt
+-->
+
+<!--
+This element is used to display a material page.
+It must be used in conjunction with mat-pages.
+
+@element mat-page
+@description A custom element used to display a Material Design page
+@keywords material design, material page, web app, html5, expandjs, web-components
+@group navigation
+@homepage http://expandjs.com/elements/mat-page
+@demo http://expandjs.com/demo/mat-pages
+
+@dependency polymer Polymer/polymer
+@dependency expandjs ExpandJS/expandjs
+@dependency iron-flex-layout PolymerElements/iron-flex-layout
+@dependency mat-paper ExpandJS/mat-paper
+@dependency xp-pages ExpandJS/xp-pages
+@dependency xp-slave-state ExpandJS/xp-slave-state
+
+@devDependency mat-demo ExpandJS/mat-demo
+@devDependency mat-tabs ExpandJS/mat-tabs
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../expandjs/expandjs.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../mat-paper/mat-paper.html">
+<link rel="import" href="../xp-pages/xp-page.html">
+<link rel="import" href="../xp-slave-state/xp-slave-state.html">
+
+<dom-module id="mat-page">
+
+    <style>
+        :host {
+            @apply(--layout-flex);
+            display: block;
+            height: 100%;
+            overflow: auto;
+        }
+
+        :host #matPageAdaptee,
+        :host #matPageWrapper {
+            height: auto;
+            min-height: 100%;
+        }
+    </style>
+
+    <template>
+        <xp-slave-state master="{{selector}}" masterTag="mat-pages"></xp-slave-state>
+        <mat-paper id="matPageWrapper" background="[[background]]">
+            <xp-page id="matPageAdaptee" active="{{active}}" closable="[[closable]]" content="[[content]]" data="{{data}}" injected="{{injected}}">
+                <content id="content"></content>
+            </xp-page>
+        </mat-paper>
+    </template>
+
+    <script>
+        Polymer({
+
+            // ELEMENT
+            is: 'mat-page',
+
+            /*********************************************************************/
+
+            // LISTENERS
+            listeners: {
+                'xp-slave': '_handleSlave'
+            },
+
+            // PROPERTIES
+            properties: {
+
+                /**
+                 * The paper's background color.
+                 *
+                 * @attribute background
+                 * @type string
+                 */
+                background: {
+                    reflectToAttribute: true,
+                    type: String,
+                    value: null
+                },
+
+                /**
+                 * If set to true, the page can be closed.
+                 *
+                 * @attribute closable
+                 * @type boolean
+                 * @default false
+                 * @notifies
+                 */
+                closable: {
+                    notify: true,
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * The `tagName` of the page's element to be injected.
+                 *
+                 * @attribute content
+                 * @type string
+                 * @notifies
+                 */
+                content: {
+                    reflectToAttribute: true,
+                    type: String,
+                    value: null
+                },
+
+                /**
+                 * The element's data
+                 *
+                 * @attribute data
+                 * @type *
+                 * @notifies
+                 */
+                data: {
+                    notifies: true,
+                    value: null
+                },
+
+                /**
+                 * The page's injected element.
+                 *
+                 * @attribute injected
+                 * @type Element
+                 * @notifies
+                 * @readonly
+                 */
+                injected: {
+                    notify: true,
+                    value: null
+                },
+
+                /**
+                 * The master selector.
+                 *
+                 * @attribute selector
+                 * @type Element
+                 * @notifies
+                 * @readonly
+                 */
+                selector: {
+                    notify: true,
+                    observer: '_selectorChanged',
+                    value: null
+                }
+            },
+
+            /*********************************************************************/
+
+            // OBSERVER
+            _selectorChanged: function (post, pre) {
+
+                // Vars
+                var self = this;
+
+                // Checking
+                if (arguments.length < 2) { return; }
+
+                // Listening
+                if (pre) { self.unlisten(pre, 'index-attribute-changed', '_handleIndexAttribute'); }
+                if (post) { self.listen(post, 'index-attribute-changed', '_handleIndexAttribute'); }
+
+                // Handling
+                self._handleIndexAttribute();
+            },
+
+            /*********************************************************************/
+
+            // LISTENER
+            mutated: function () {
+
+                // Vars
+                var self      = this,
+                    attribute = self.selector && self.selector.indexAttribute;
+
+                // Disconnecting
+                if (self.attributeObserver) { self.attributeObserver.disconnect(); }
+
+                // Checking
+                if (attribute) { XP.setAttribute(self.$.matPageAdaptee, attribute, self.getAttribute(attribute)); }
+
+                // Observing
+                self.attributeObserver = attribute ? XP.onMutation(self, self.mutated.bind(self), {attributes: true, attributeFilter: [attribute]}) : null;
+            },
+
+            /*********************************************************************/
+
+            // HANDLER
+            _handleIndexAttribute: function () {
+                this.mutated();
+            },
+
+            // HANDLER
+            _handleSlave: function (event) {
+                if (event.detail.firer !== this && event.detail.masterTag === 'mat-pages' && XP.matches(event.detail.firer, 'mat-page')) { event.stopPropagation(); }
+            }
+        });
+    </script>
+
+</dom-module>
