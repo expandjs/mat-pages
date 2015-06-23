@@ -17,15 +17,15 @@ It must be used in conjunction with mat-page.
 @homepage http://expandjs.com/elements/mat-pages
 @demo http://expandjs.com/demo/mat-pages
 
-@dependency polymer Polymer/polymer
-@dependency expandjs ExpandJS/expandjs
-@dependency iron-flex-layout PolymerElements/iron-flex-layout
-@dependency mat-paper ExpandJS/mat-paper
-@dependency xp-master-state ExpandJS/xp-master-state
-@dependency xp-pages ExpandJS/xp-pages
+@dependency polymer Polymer/polymer#^1.0.4
+@dependency expandjs ExpandJS/expandjs#0.9.1
+@dependency iron-flex-layout PolymerElements/iron-flex-layout#^1.0.2
+@dependency mat-paper ExpandJS/mat-paper#0.9.1
+@dependency xp-master-state ExpandJS/xp-master-state#0.9.1
+@dependency xp-pages ExpandJS/xp-pages#0.9.1
 
-@devDependency mat-demo ExpandJS/mat-demo
-@devDependency mat-tabs ExpandJS/mat-tabs
+@devDependency mat-demo ExpandJS/mat-demo#0.9.1
+@devDependency mat-tabs ExpandJS/mat-tabs#0.9.1
 -->
 
 <link rel="import" href="../polymer/polymer.html">
@@ -60,7 +60,7 @@ It must be used in conjunction with mat-page.
     </style>
 
     <template>
-        <xp-master-state id="xpMasterState" slaves="{{items}}" slaveTag="mat-page"></xp-master-state>
+        <template is="xp-master-state" id="xpMasterState" slaves="{{items}}" slave-tag="mat-page"></template>
         <xp-pages context="[[self]]" id="matPagesAdaptee" default-selected="[[defaultSelected]]"
                   empty-items="{{emptyItems}}" index-attribute="[[indexAttribute]]" lazy="[[lazy]]"
                   selected="{{selected}}" on-selection-changed="_handleSelection">
@@ -73,7 +73,7 @@ It must be used in conjunction with mat-page.
 
             // ELEMENT
             is: 'mat-pages',
-            
+
             /*********************************************************************/
 
             /**
