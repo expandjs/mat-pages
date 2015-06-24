@@ -62,8 +62,9 @@ It must be used in conjunction with mat-page.
     <template>
         <template is="xp-master-state" id="xpMasterState" slaves="{{items}}" slave-tag="mat-page"></template>
         <xp-pages context="[[self]]" id="matPagesAdaptee" default-selected="[[defaultSelected]]"
-                  empty-items="{{emptyItems}}" index-attribute="[[indexAttribute]]" lazy="[[lazy]]"
-                  selected="{{selected}}" on-selection-changed="_handleSelection">
+                  empty-items="{{emptyItems}}" index-attribute="[[indexAttribute]]" initialized="{{initialized}}"
+                  is-mutated="{{isMutated}}" lazy="[[lazy]]" mutating="{{mutating}}" selected="{{selected}}"
+                  selecting="{{selecting}}" single-item="{{singleItem}}" on-selection-changed="_handleSelection">
             <content id="content"></content>
         </xp-pages>
     </template>
@@ -284,16 +285,29 @@ It must be used in conjunction with mat-page.
                 },
 
                 /**
-                 * If set to true, the pages content will load only when active.
+                 * If set to true, the selector is initialized.
                  *
-                 * @attribute lazy
+                 * @attribute initialized
                  * @type boolean
-                 * @default false
+                 * @notifies
+                 * @readonly
                  */
-                lazy: {
-                    reflectToAttribute: true,
-                    type: Boolean,
-                    value: false
+                initialized: {
+                    notify: true,
+                    type: Boolean
+                },
+
+                /**
+                 * If set to true, the mutation observer is set.
+                 *
+                 * @attribute isMutated
+                 * @type boolean
+                 * @notifies
+                 * @readonly
+                 */
+                isMutated: {
+                    notify: true,
+                    type: Boolean
                 },
 
                 /**
@@ -310,6 +324,32 @@ It must be used in conjunction with mat-page.
                 },
 
                 /**
+                 * If set to true, the pages content will load only when active.
+                 *
+                 * @attribute lazy
+                 * @type boolean
+                 * @default false
+                 */
+                lazy: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
+                 * If set to true, the selector is currently mutating.
+                 *
+                 * @attribute mutating
+                 * @type boolean
+                 * @notifies
+                 * @readonly
+                 */
+                mutating: {
+                    notify: true,
+                    type: Boolean
+                },
+
+                /**
                  * The selected page's index.
                  *
                  * @attribute selected
@@ -319,6 +359,19 @@ It must be used in conjunction with mat-page.
                 selected: {
                     notify: true,
                     value: null
+                },
+
+                /**
+                 * If set to true, the selection is about to change.
+                 *
+                 * @attribute selecting
+                 * @type boolean
+                 * @notifies
+                 * @readonly
+                 */
+                selecting: {
+                    notify: true,
+                    type: Boolean
                 },
 
                 /**
@@ -334,6 +387,20 @@ It must be used in conjunction with mat-page.
                     observer: '_selectionChanged',
                     readOnly: true,
                     value: null
+                },
+
+                /**
+                 * If set to true, there's only one item.
+                 *
+                 * @attribute single-item
+                 * @type boolean
+                 * @notifies
+                 * @readonly
+                 */
+                singleItem: {
+                    notify: true,
+                    reflectToAttribute: true,
+                    type: Boolean
                 }
             },
 
