@@ -18,14 +18,14 @@ It must be used in conjunction with mat-pages.
 @demo http://expandjs.com/demo/mat-pages
 
 @dependency polymer Polymer/polymer#^1.0.0
-@dependency expandjs ExpandJS/expandjs#0.9.1
+@dependency expandjs ExpandJS/expandjs#0.9.2
 @dependency iron-flex-layout PolymerElements/iron-flex-layout#^1.0.0
-@dependency mat-paper ExpandJS/mat-paper#0.9.1
-@dependency xp-pages ExpandJS/xp-pages#0.9.1
-@dependency xp-slave-state ExpandJS/xp-slave-state#0.9.1
+@dependency mat-paper ExpandJS/mat-paper#0.9.2
+@dependency xp-pages ExpandJS/xp-pages#0.9.2
+@dependency xp-slave-state ExpandJS/xp-slave-state#0.9.2
 
-@devDependency mat-demo ExpandJS/mat-demo#0.9.1
-@devDependency mat-tabs ExpandJS/mat-tabs#0.9.1
+@devDependency mat-demo ExpandJS/mat-demo#0.9.2
+@devDependency mat-tabs ExpandJS/mat-tabs#0.9.2
 -->
 
 <link rel="import" href="../polymer/polymer.html">
@@ -54,7 +54,7 @@ It must be used in conjunction with mat-pages.
 
     <template>
         <template is="xp-slave-state" master="{{selector}}" master-tag="mat-pages"></template>
-        <mat-paper id="matPageWrapper" background="[[background]]">
+        <mat-paper id="matPageWrapper" background="[[background]]" theme="{{theme}}">
             <xp-page id="matPageAdaptee" active="{{active}}" closable="[[closable]]" content="[[content]]" data="{{data}}" injected="{{injected}}">
                 <content id="content"></content>
             </xp-page>
@@ -154,6 +154,18 @@ It must be used in conjunction with mat-pages.
                     notify: true,
                     observer: '_selectorChanged',
                     value: null
+                },
+
+                /**
+                 * The paper's theme, used to apply the default foreground color.
+                 *
+                 * @attribute theme
+                 * @type String
+                 * @notifies
+                 */
+                theme: {
+                    notify: true,
+                    type: String
                 }
             },
 

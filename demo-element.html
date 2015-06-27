@@ -5,29 +5,41 @@
 <dom-module id="mat-pages-demo">
 
     <style>
-        :host .demo-container {
+        :host mat-pages {
             height: 256px;
             line-height: 256px;
             position: relative;
+            text-align: center;
         }
     </style>
 
     <template>
-        <mat-demo label="mat-pages">
 
-            <div class="demo-title">Default</div>
+        <mat-demo label="Default" padding-disabled>
+            <script type="text/html">
+                <mat-tabs target="demoPages">
+                    <mat-tab label="First page"></mat-tab>
+                    <mat-tab label="Second page"></mat-tab>
+                    <mat-tab label="Third page"></mat-tab>
+                </mat-tabs>
+                <mat-pages id="demoPages">
+                    <mat-page background="light-blue">First page</mat-page>
+                    <mat-page background="orange">Second page</mat-page>
+                    <mat-page background="green">Third page</mat-page>
+                </mat-pages>
+            </script>
             <mat-tabs target="demoPages">
-                <mat-tab label="First tab"></mat-tab>
-                <mat-tab label="Second tab"></mat-tab>
-                <mat-tab label="Third tab"></mat-tab>
+                <mat-tab label="First page"></mat-tab>
+                <mat-tab label="Second page"></mat-tab>
+                <mat-tab label="Third page"></mat-tab>
             </mat-tabs>
-            <mat-pages id="demoPages" class="demo-container">
+            <mat-pages id="demoPages">
                 <mat-page background="light-blue">First page</mat-page>
                 <mat-page background="orange">Second page</mat-page>
                 <mat-page background="green">Third page</mat-page>
             </mat-pages>
-
         </mat-demo>
+
     </template>
 
     <script>
