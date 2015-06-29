@@ -415,20 +415,35 @@ It must be used in conjunction with mat-page.
 
             // LISTENER
             created: function () {
-                this._jobAnimation = XP.debounce(this._setAnimated.bind(this, false), 330);
+
+                // Vars
+                var self = this;
+
+                // Setting
+                self._jobAnimation = XP.debounce(function () { self._setAnimated(false); }, 330);
             },
 
             /*********************************************************************/
 
             // HANDLER
             _handleItems: function () {
-                var self = this, items = self.items || [];
+
+                // Vars
+                var self  = this,
+                    items = self.items || [];
+
+                // Styling
                 XP.setStyle(self.$.matPagesAdaptee, 'width', (items.length * 100) + '%');
             },
 
             // HANDLER
             _handleSelection: function () {
-                var self = this, selection = self.$.matPagesAdaptee.selection;
+
+                // Vars
+                var self      = this,
+                    selection = self.$.matPagesAdaptee.selection;
+
+                // Setting
                 self._setSelection(selection && selection.domHost);
             }
         });
