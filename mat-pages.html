@@ -63,8 +63,8 @@ It must be used in conjunction with mat-page.
         <template is="xp-master-state" id="xpMasterState" slaves="{{items}}" slave-tag="mat-page"></template>
         <xp-pages context="[[self]]" id="matPagesAdaptee" default-selected="[[defaultSelected]]"
                   empty-items="{{emptyItems}}" index-attribute="[[indexAttribute]]" initialized="{{initialized}}"
-                  is-mutated="{{isMutated}}" lazy="[[lazy]]" mutating="{{mutating}}" selected="{{selected}}"
-                  selecting="{{selecting}}" single-item="{{singleItem}}" on-selection-changed="_handleSelection">
+                  is-mutated="{{isMutated}}" mutating="{{mutating}}" selected="{{selected}}" selecting="{{selecting}}"
+                  single-item="{{singleItem}}" on-selection-changed="_handleSelection">
             <content id="content"></content>
         </xp-pages>
     </template>
@@ -321,19 +321,6 @@ It must be used in conjunction with mat-page.
                 items: {
                     notify: true,
                     type: Array
-                },
-
-                /**
-                 * If set to true, the pages content will load only when active.
-                 *
-                 * @attribute lazy
-                 * @type boolean
-                 * @default false
-                 */
-                lazy: {
-                    reflectToAttribute: true,
-                    type: Boolean,
-                    value: false
                 },
 
                 /**

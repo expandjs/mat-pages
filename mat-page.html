@@ -143,6 +143,19 @@ It must be used in conjunction with mat-pages.
                 },
 
                 /**
+                 * If set to true, the page's content will load on active.
+                 *
+                 * @attribute lazy
+                 * @type boolean
+                 * @default false
+                 */
+                lazy: {
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
                  * The master selector.
                  *
                  * @attribute selector
