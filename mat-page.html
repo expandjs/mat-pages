@@ -54,7 +54,7 @@ It must be used in conjunction with mat-pages.
 
     <template>
         <template is="xp-slave-state" master="{{selector}}" master-tag="mat-pages"></template>
-        <mat-paper id="matPageWrapper" background="[[background]]" theme="{{theme}}">
+        <mat-paper id="matPageWrapper" background="[[background]]">
             <xp-page id="matPageAdaptee" active="{{active}}" closable="[[closable]]" content="[[content]]" data="{{data}}" injected="{{injected}}">
                 <content id="content"></content>
             </xp-page>
@@ -167,18 +167,6 @@ It must be used in conjunction with mat-pages.
                     notify: true,
                     observer: '_selectorChanged',
                     value: null
-                },
-
-                /**
-                 * The paper's theme, used to apply the default foreground color.
-                 *
-                 * @attribute theme
-                 * @type String
-                 * @notifies
-                 */
-                theme: {
-                    notify: true,
-                    type: String
                 }
             },
 

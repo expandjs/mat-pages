@@ -99,7 +99,7 @@ It must be used in conjunction with mat-page.
                 self.$.matPagesAdaptee.close(index);
 
                 // Removing
-                return self.$.xpMasterState.removeSlave(item);
+                return XP.removeChild(Polymer.dom(Polymer.dom(item).parentNode), item);
             },
 
             /**
@@ -156,7 +156,8 @@ It must be used in conjunction with mat-page.
              * @returns {Element}
              */
             open: function (properties) {
-                return this.$.xpMasterState.appendSlave(XP.assign({}, properties, {closable: true}));
+                XP.assertArgument(XP.isVoid(properties) || XP.isObject(properties), 1, 'Object');
+                return XP.appendChild(Polymer.dom(this), XP.createElement('mat-page', {properties: XP.assign({}, properties, {closable: true})}));
             },
 
             /**
