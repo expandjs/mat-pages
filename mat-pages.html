@@ -59,8 +59,8 @@ It must be used in conjunction with mat-page.
             will-change: transform;
         }
 
-        :host([animated]) > #matPagesAdaptee ::content > mat-page > #matPageWrapper > #matPageAdaptee {
-            display: block !important;
+        :host:not([animated]) > #matPagesAdaptee ::content > mat-page > #matPageWrapper > #matPageAdaptee:not([active]) {
+            display: none !important;
         }
     </style>
 
