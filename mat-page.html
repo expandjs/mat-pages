@@ -17,21 +17,26 @@ It must be used in conjunction with mat-pages.
 @homepage http://expandjs.com/elements/mat-page
 @demo http://expandjs.com/demo/mat-pages
 
-@dependency polymer Polymer/polymer#^1.0.0
-@dependency expandjs ExpandJS/expandjs#0.9.3
-@dependency iron-flex-layout PolymerElements/iron-flex-layout#^1.0.0
-@dependency mat-paper ExpandJS/mat-paper#0.9.3
-@dependency xp-pages ExpandJS/xp-pages#0.9.3
-@dependency xp-slave-state ExpandJS/xp-slave-state#0.9.3
+@wraps xp-page http://expandjs.com/elements/xp-page
+@behavior xp-adapter-behavior http://expandjs.com/elements/xp-adapter-behavior
 
-@devDependency mat-demo ExpandJS/mat-demo#0.9.3
-@devDependency mat-tabs ExpandJS/mat-tabs#0.9.3
+@dependency polymer Polymer/polymer#^1.0.0
+@dependency expandjs ExpandJS/expandjs#0.9.4
+@dependency iron-flex-layout PolymerElements/iron-flex-layout#^1.0.0
+@dependency mat-paper ExpandJS/mat-paper#0.9.4
+@dependency xp-adapter-behavior ExpandJS/xp-adapter-behavior#0.9.4
+@dependency xp-pages ExpandJS/xp-pages#0.9.4
+@dependency xp-slave-state ExpandJS/xp-slave-state#0.9.4
+
+@devDependency mat-demo ExpandJS/mat-demo#0.9.4
+@devDependency mat-tabs ExpandJS/mat-tabs#0.9.4
 -->
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../expandjs/expandjs.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../mat-paper/mat-paper.html">
+<link rel="import" href="../xp-adapter-behavior/xp-adapter-behavior.html">
 <link rel="import" href="../xp-pages/xp-page.html">
 <link rel="import" href="../xp-slave-state/xp-slave-state.html">
 
@@ -66,6 +71,11 @@ It must be used in conjunction with mat-pages.
 
             // ELEMENT
             is: 'mat-page',
+
+            // BEHAVIORS
+            behaviors: [
+                Polymer.XPAdapterBehavior
+            ],
 
             /*********************************************************************/
 
@@ -206,6 +216,11 @@ It must be used in conjunction with mat-pages.
 
                 // Observing
                 self.attributeObserver = attribute ? XP.onMutation(self, self.mutated.bind(self), {attributes: true, attributeFilter: [attribute]}) : null;
+            },
+
+            // LISTENER
+            ready: function () {
+                this._adapt(this.$.matPageAdaptee);
             },
 
             /*********************************************************************/

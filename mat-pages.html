@@ -18,22 +18,25 @@ It must be used in conjunction with mat-page.
 @demo http://expandjs.com/demo/mat-pages
 
 @wraps xp-pages http://expandjs.com/elements/xp-pages
+@behavior xp-adapter-behavior http://expandjs.com/elements/xp-adapter-behavior
 
 @dependency polymer Polymer/polymer#^1.0.0
-@dependency expandjs ExpandJS/expandjs#0.9.3
+@dependency expandjs ExpandJS/expandjs#0.9.4
 @dependency iron-flex-layout PolymerElements/iron-flex-layout#^1.0.0
-@dependency mat-paper ExpandJS/mat-paper#0.9.3
-@dependency xp-master-state ExpandJS/xp-master-state#0.9.3
-@dependency xp-pages ExpandJS/xp-pages#0.9.3
+@dependency mat-paper ExpandJS/mat-paper#0.9.4
+@dependency xp-adapter-behavior ExpandJS/xp-adapter-behavior#0.9.4
+@dependency xp-master-state ExpandJS/xp-master-state#0.9.4
+@dependency xp-pages ExpandJS/xp-pages#0.9.4
 
-@devDependency mat-demo ExpandJS/mat-demo#0.9.3
-@devDependency mat-tabs ExpandJS/mat-tabs#0.9.3
+@devDependency mat-demo ExpandJS/mat-demo#0.9.4
+@devDependency mat-tabs ExpandJS/mat-tabs#0.9.4
 -->
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../expandjs/expandjs.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../mat-paper/mat-paper.html">
+<link rel="import" href="../xp-adapter-behavior/xp-adapter-behavior.html">
 <link rel="import" href="../xp-master-state/xp-master-state.html">
 <link rel="import" href="../xp-pages/xp-pages.html">
 <link rel="import" href="mat-page.html">
@@ -76,6 +79,11 @@ It must be used in conjunction with mat-page.
 
             // ELEMENT
             is: 'mat-pages',
+
+            // BEHAVIORS
+            behaviors: [
+                Polymer.XPAdapterBehavior
+            ],
 
             /*********************************************************************/
 
@@ -374,7 +382,6 @@ It must be used in conjunction with mat-page.
                  */
                 selection: {
                     notify: true,
-                    observer: '_selectionChanged',
                     readOnly: true,
                     value: null
                 },
@@ -396,21 +403,14 @@ It must be used in conjunction with mat-page.
 
             /*********************************************************************/
 
-            // OBSERVER
-            _selectionChanged: function () {
-                if (arguments.length > 1) { this._animate(); }
-            },
-
-            /*********************************************************************/
-
             // LISTENER
             created: function () {
+                this._jobAnimation = XP.debounce(this._setAnimated.bind(this, false), 330);
+            },
 
-                // Vars
-                var self = this;
-
-                // Setting
-                self._jobAnimation = XP.debounce(function () { self._setAnimated(false); }, 330);
+            // LISTENER
+            ready: function () {
+                this._adapt(this.$.matPagesAdaptee);
             },
 
             /*********************************************************************/
@@ -424,6 +424,9 @@ It must be used in conjunction with mat-page.
 
                 // Styling
                 XP.setStyle(self.$.matPagesAdaptee, 'width', (items.length * 100) + '%');
+
+                // Animating
+                self._animate();
             },
 
             // HANDLER
@@ -435,6 +438,9 @@ It must be used in conjunction with mat-page.
 
                 // Setting
                 self._setSelection(selection && selection.domHost);
+
+                // Animating
+                self._animate();
             }
         });
     </script>
