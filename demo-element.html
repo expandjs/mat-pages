@@ -15,8 +15,21 @@
 
     <template>
 
-        <mat-demo label="Default" padding-disabled>
-            <script type="text/html">
+        <mat-demo name="mat-pages" type="element" url="http://expandjs.com/elements/mat-pages">
+
+            <mat-demo-panel label="Default" padding-disabled>
+                <script type="text/html">
+                    <mat-tabs target="demoPages">
+                        <mat-tab label="First page"></mat-tab>
+                        <mat-tab label="Second page"></mat-tab>
+                        <mat-tab label="Third page"></mat-tab>
+                    </mat-tabs>
+                    <mat-pages id="demoPages">
+                        <mat-page background="light-blue">First page</mat-page>
+                        <mat-page background="orange">Second page</mat-page>
+                        <mat-page background="green">Third page</mat-page>
+                    </mat-pages>
+                </script>
                 <mat-tabs target="demoPages">
                     <mat-tab label="First page"></mat-tab>
                     <mat-tab label="Second page"></mat-tab>
@@ -27,17 +40,8 @@
                     <mat-page background="orange">Second page</mat-page>
                     <mat-page background="green">Third page</mat-page>
                 </mat-pages>
-            </script>
-            <mat-tabs target="demoPages">
-                <mat-tab label="First page"></mat-tab>
-                <mat-tab label="Second page"></mat-tab>
-                <mat-tab label="Third page"></mat-tab>
-            </mat-tabs>
-            <mat-pages id="demoPages">
-                <mat-page background="light-blue">First page</mat-page>
-                <mat-page background="orange">Second page</mat-page>
-                <mat-page background="green">Third page</mat-page>
-            </mat-pages>
+            </mat-demo-panel>
+
         </mat-demo>
 
     </template>
