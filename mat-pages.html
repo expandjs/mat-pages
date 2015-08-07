@@ -7,9 +7,36 @@ The complete set of contributors may be found at https://expandjs.github.io/CONT
 -->
 
 <!--
-This element is used to manage material pages.
+An element used to encapsulate and manage [Material Design pages](http://www.google.com/design/spec/patterns/navigational-transitions.html#navigational-transitions-sibling-to-sibling).
 
-It must be used in conjunction with mat-page.
+It must be used in conjunction with [mat-page](http://expandjs.com/elements/mat-page).
+
+```html
+<mat-pages>
+    <mat-page>First page</mat-page>
+    <mat-page>Second page</mat-page>
+    <mat-page>First page</mat-page>
+</mat-pages>
+```
+
+You can control the pages manually or automatically using
+[mat-tabs](http://expandjs.com/elements/mat-tabs) or
+[xp-router](http://expandjs.com/elements/xp-router),
+by binding the `selected` attribute.
+
+```html
+<mat-tabs selected="{{selected}}">
+    <mat-tab label="First"></mat-tab>
+    <mat-tab label="Second"></mat-tab>
+    <mat-tab label="Third"></mat-tab>
+</mat-tabs>
+
+<mat-pages selected="{{selected}}">
+    <mat-page>First page</mat-page>
+    <mat-page>Second page</mat-page>
+    <mat-page>Third page</mat-page>
+</mat-pages>
+```
 
 @element mat-pages
 @description A custom element used to manage a series of Material Design pages
@@ -21,17 +48,18 @@ It must be used in conjunction with mat-page.
 
 @adapts xp-pages /bower_components/xp-pages/xp-pages.html
 @behavior xp-adapter-behavior /bower_components/xp-adapter-behavior/xp-adapter-behavior.html
+@behavior xp-master-behavior /bower_components/xp-master-behavior/xp-master-behavior.html
 
 @dependency polymer Polymer/polymer#^1.0.0
-@dependency expandjs ExpandJS/expandjs#0.9.5
+@dependency expandjs ExpandJS/expandjs#0.9.6
 @dependency iron-flex-layout PolymerElements/iron-flex-layout#^1.0.0
-@dependency mat-paper ExpandJS/mat-paper#0.9.5
-@dependency xp-adapter-behavior ExpandJS/xp-adapter-behavior#0.9.5
-@dependency xp-master-state ExpandJS/xp-master-state#0.9.5
-@dependency xp-pages ExpandJS/xp-pages#0.9.5
+@dependency mat-paper ExpandJS/mat-paper#0.9.6
+@dependency xp-adapter-behavior ExpandJS/xp-adapter-behavior#0.9.6
+@dependency xp-master-behavior ExpandJS/xp-master-behavior#0.9.6
+@dependency xp-pages ExpandJS/xp-pages#0.9.6
 
-@devDependency mat-demo ExpandJS/mat-demo#0.9.5
-@devDependency mat-tabs ExpandJS/mat-tabs#0.9.5
+@devDependency mat-demo ExpandJS/mat-demo#0.9.6
+@devDependency mat-tabs ExpandJS/mat-tabs#0.9.6
 -->
 
 <link rel="import" href="../polymer/polymer.html">
@@ -39,7 +67,7 @@ It must be used in conjunction with mat-page.
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../mat-paper/mat-paper.html">
 <link rel="import" href="../xp-adapter-behavior/xp-adapter-behavior.html">
-<link rel="import" href="../xp-master-state/xp-master-state.html">
+<link rel="import" href="../xp-master-behavior/xp-master-behavior.html">
 <link rel="import" href="../xp-pages/xp-pages.html">
 <link rel="import" href="mat-page.html">
 
@@ -67,11 +95,10 @@ It must be used in conjunction with mat-page.
     </style>
 
     <template>
-        <template is="xp-master-state" id="xpMasterState" slaves="{{items}}" slave-tag="mat-page"></template>
         <xp-pages context="[[self]]" id="matPagesAdaptee" default-selected="[[defaultSelected]]"
                   empty-items="{{emptyItems}}" index-attribute="[[indexAttribute]]" initialized="{{initialized}}"
                   is-mutated="{{isMutated}}" mutating="{{mutating}}" selected="{{selected}}" selecting="{{selecting}}"
-                  single-item="{{singleItem}}" on-selection-changed="_handleSelection">
+                  single-item="{{singleItem}}" on-items-changed="_handleItems" on-selection-changed="_handleSelection">
             <content id="content"></content>
         </xp-pages>
     </template>
@@ -84,7 +111,8 @@ It must be used in conjunction with mat-page.
 
             // BEHAVIORS
             behaviors: [
-                Polymer.XPAdapterBehavior
+                Polymer.XPAdapterBehavior,
+                Polymer.XPMasterBehavior
             ],
 
             /*********************************************************************/
@@ -99,14 +127,15 @@ It must be used in conjunction with mat-page.
             close: function (index) {
 
                 // Vars
-                var self = this,
-                    item = self.findItem(index);
+                var self    = this,
+                    adaptee = self.$.matPagesAdaptee,
+                    item    = self.findItem(index);
 
                 // Checking
                 if (!item || !item.closable) { return null; }
 
                 // Propagating
-                self.$.matPagesAdaptee.close(index);
+                adaptee.close(index);
 
                 // Removing
                 return XP.removeChild(Polymer.dom(Polymer.dom(item).parentNode), item);
@@ -216,16 +245,17 @@ It must be used in conjunction with mat-page.
             _animate: function() {
 
                 // Vars
-                var self  = this,
-                    index = self.findIndex(self.selection) || 0,
-                    items = self.items || [];
+                var self    = this,
+                    adaptee = self.$.matPagesAdaptee,
+                    index   = self.findIndex(self.selection) || 0,
+                    items   = self.items || [];
 
                 // Setting
                 self._setAnimated(true);
 
                 // Styling
-                XP.setStyle(self.$.matPagesAdaptee, '-webkit-transform', 'translateX(' + (index && (-index * 100 / items.length)) + '%)');
-                XP.setStyle(self.$.matPagesAdaptee, 'transform', 'translateX(' + (index && (-index * 100 / items.length)) + '%)');
+                XP.setStyle(adaptee, '-webkit-transform', 'translateX(' + (index && (-index * 100 / items.length)) + '%)');
+                XP.setStyle(adaptee, 'transform', 'translateX(' + (index && (-index * 100 / items.length)) + '%)');
 
                 // Animating
                 self._jobAnimation();
@@ -233,13 +263,18 @@ It must be used in conjunction with mat-page.
                 return self;
             },
 
-            /*********************************************************************/
-
-            // LISTENERS
-            listeners: {
-                'items-changed': '_handleItems',
-                'selection-changed': '_handleSelection'
+            /**
+             * Returns the slaves map.
+             *
+             * @method _setupSlaves
+             * @returns {Object}
+             * @private
+             */
+            _setupSlaves: function () {
+                return {items: 'mat-page'};
             },
+
+            /*********************************************************************/
 
             // PROPERTIES
             properties: {
@@ -333,7 +368,9 @@ It must be used in conjunction with mat-page.
                  */
                 items: {
                     notify: true,
-                    type: Array
+                    readOnly: true,
+                    type: Array,
+                    value: function () { return []; }
                 },
 
                 /**
@@ -421,11 +458,12 @@ It must be used in conjunction with mat-page.
             _handleItems: function () {
 
                 // Vars
-                var self  = this,
-                    items = self.items || [];
+                var self    = this,
+                    adaptee = self.$.matPagesAdaptee,
+                    items   = adaptee.items || [];
 
                 // Styling
-                XP.setStyle(self.$.matPagesAdaptee, 'width', (items.length * 100) + '%');
+                XP.setStyle(adaptee, 'width', (items.length * 100) + '%');
 
                 // Animating
                 self._animate();
@@ -436,7 +474,8 @@ It must be used in conjunction with mat-page.
 
                 // Vars
                 var self      = this,
-                    selection = self.$.matPagesAdaptee.selection;
+                    adaptee   = self.$.matPagesAdaptee,
+                    selection = adaptee.selection;
 
                 // Setting
                 self._setSelection(selection && selection.domHost);

@@ -7,9 +7,38 @@ The complete set of contributors may be found at https://expandjs.github.io/CONT
 -->
 
 <!--
-This element is used to display a material page.
+An element is used to display a [Material Design page](http://www.google.com/design/spec/patterns/navigational-transitions.html#navigational-transitions-sibling-to-sibling).
 
-It must be used in conjunction with mat-pages.
+It must be used in conjunction with [mat-pages](http://expandjs.com/elements/mat-pages).
+
+```html
+<mat-pages>
+    <mat-page>First page</mat-page>
+    <mat-page>Second page</mat-page>
+    <mat-page>First page</mat-page>
+</mat-pages>
+```
+
+If you have dynamic content or don't want to overburden the DOM with too many nodes, you can use
+`lazy` to lazy load other custom elements that will act as the page's content when it's `active`.
+
+```html
+<mat-pages>
+    <mat-page content="app-homepage" lazy></mat-page>
+    <mat-page content="app-content" lazy></mat-page>
+    <mat-page content="app-settings" lazy></mat-page>
+</mat-pages>
+```
+
+---
+
+## Styling
+
+The page's background color can be changed accordingly to the [Material Design palette](http://www.google.com/design/spec/style/color.html#color-color-palette).
+
+```html
+<mat-page background="blue-a700">...</mat-page>
+```
 
 @element mat-page
 @description A custom element used to display a Material Design page
@@ -21,17 +50,18 @@ It must be used in conjunction with mat-pages.
 
 @adapts xp-page /bower_components/xp-pages/xp-page.html
 @behavior xp-adapter-behavior /bower_components/xp-adapter-behavior/xp-adapter-behavior.html
+@behavior xp-slave-behavior /bower_components/xp-slave-behavior/xp-slave-behavior.html
 
 @dependency polymer Polymer/polymer#^1.0.0
-@dependency expandjs ExpandJS/expandjs#0.9.5
+@dependency expandjs ExpandJS/expandjs#0.9.6
 @dependency iron-flex-layout PolymerElements/iron-flex-layout#^1.0.0
-@dependency mat-paper ExpandJS/mat-paper#0.9.5
-@dependency xp-adapter-behavior ExpandJS/xp-adapter-behavior#0.9.5
-@dependency xp-pages ExpandJS/xp-pages#0.9.5
-@dependency xp-slave-state ExpandJS/xp-slave-state#0.9.5
+@dependency mat-paper ExpandJS/mat-paper#0.9.6
+@dependency xp-adapter-behavior ExpandJS/xp-adapter-behavior#0.9.6
+@dependency xp-pages ExpandJS/xp-pages#0.9.6
+@dependency xp-slave-behavior ExpandJS/xp-slave-behavior#0.9.6
 
-@devDependency mat-demo ExpandJS/mat-demo#0.9.5
-@devDependency mat-tabs ExpandJS/mat-tabs#0.9.5
+@devDependency mat-demo ExpandJS/mat-demo#0.9.6
+@devDependency mat-tabs ExpandJS/mat-tabs#0.9.6
 -->
 
 <link rel="import" href="../polymer/polymer.html">
@@ -40,7 +70,7 @@ It must be used in conjunction with mat-pages.
 <link rel="import" href="../mat-paper/mat-paper.html">
 <link rel="import" href="../xp-adapter-behavior/xp-adapter-behavior.html">
 <link rel="import" href="../xp-pages/xp-page.html">
-<link rel="import" href="../xp-slave-state/xp-slave-state.html">
+<link rel="import" href="../xp-slave-behavior/xp-slave-behavior.html">
 
 <dom-module id="mat-page">
 
@@ -62,7 +92,6 @@ It must be used in conjunction with mat-pages.
     </style>
 
     <template>
-        <template is="xp-slave-state" master="{{selector}}" master-tag="mat-pages"></template>
         <mat-paper id="matPageWrapper" background="[[background]]">
             <xp-page id="matPageAdaptee" active="{{active}}" closable="[[closable]]" content="[[content]]" data="{{data}}" injected="{{injected}}">
                 <content id="content"></content>
@@ -78,14 +107,28 @@ It must be used in conjunction with mat-pages.
 
             // BEHAVIORS
             behaviors: [
-                Polymer.XPAdapterBehavior
+                Polymer.XPAdapterBehavior,
+                Polymer.XPSlaveBehavior
             ],
+
+            /*********************************************************************/
+
+            /**
+             * Returns the masters map.
+             *
+             * @method _setupMasters
+             * @returns {Object}
+             * @private
+             */
+            _setupMasters: function () {
+                return {selector: 'mat-pages'};
+            },
 
             /*********************************************************************/
 
             // LISTENERS
             listeners: {
-                'xp-slave-state': '_handleSlave'
+                'xp-slave': '_handleSlave'
             },
 
             // PROPERTIES
@@ -180,6 +223,7 @@ It must be used in conjunction with mat-pages.
                 selector: {
                     notify: true,
                     observer: '_selectorChanged',
+                    readOnly: true,
                     value: null
                 }
             },
@@ -236,7 +280,7 @@ It must be used in conjunction with mat-pages.
 
             // HANDLER
             _handleSlave: function (event) {
-                if (event.detail.firer !== this && event.detail.masterTag === 'mat-pages' && XP.matches(event.detail.firer, 'mat-page')) { event.stopPropagation(); }
+                if (event.detail.firer !== this && event.detail.selector === 'mat-pages' && XP.matches(event.detail.firer, 'mat-page')) { event.stopPropagation(); }
             }
         });
     </script>
