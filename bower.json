@@ -2,6 +2,7 @@
   "name": "mat-pages",
   "license": "BSD-3-Clause",
   "version": "0.9.6",
+  "main": "mat-pages.html",
   "description": "A custom element used to manage a series of Material Design pages",
   "homepage": "http://expandjs.com/elements/mat-pages",
   "authors": [
@@ -16,10 +17,6 @@
     "html5",
     "expandjs",
     "web-components"
-  ],
-  "main": [
-    "mat-page.html",
-    "mat-pages.html"
   ],
   "ignore": [
     "**/.*"
