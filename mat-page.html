@@ -135,6 +135,21 @@ The page's background color can be changed accordingly to the [Material Design p
             properties: {
 
                 /**
+                 * If set to true, the page is active.
+                 *
+                 * @attribute active
+                 * @type boolean
+                 * @default false
+                 * @notifies
+                 */
+                active: {
+                    notify: true,
+                    reflectToAttribute: true,
+                    type: Boolean,
+                    value: false
+                },
+
+                /**
                  * The paper's background color.
                  *
                  * @attribute background

@@ -86,7 +86,7 @@ by binding the `selected` attribute.
             -webkit-transition: -webkit-transform 0.33s;
             transition: transform 0.33s;
             width: 100%;
-            will-change: transform;
+            will-change: -webkit-transform, transform;
         }
 
         :host:not([animated]) > #matPagesAdaptee ::content > mat-page > #matPageWrapper > #matPageAdaptee:not([active]) {
@@ -247,8 +247,8 @@ by binding the `selected` attribute.
                 // Vars
                 var self    = this,
                     adaptee = self.$.matPagesAdaptee,
-                    index   = self.findIndex(self.selection) || 0,
-                    items   = self.items || [];
+                    items   = self.items || [],
+                    index   = XP.indexOf(items, self.selection) || 0;
 
                 // Setting
                 self._setAnimated(true);
