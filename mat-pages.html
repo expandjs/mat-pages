@@ -73,34 +73,36 @@ by binding the `selected` attribute.
 
 <dom-module id="mat-pages">
 
-    <style>
-        :host {
-            @apply(--layout-fit);
-            display: block;
-            overflow: hidden;
-        }
-
-        :host #matPagesAdaptee {
-            @apply(--layout-horizontal);
-            right: auto;
-            -webkit-transition: -webkit-transform 0.33s;
-            transition: transform 0.33s;
-            width: 100%;
-            will-change: -webkit-transform, transform;
-        }
-
-        :host:not([animated]) > #matPagesAdaptee ::content > mat-page > #matPageWrapper > #matPageAdaptee:not([active]) {
-            display: none !important;
-        }
-    </style>
-
     <template>
+
+        <style>
+            :host {
+                @apply(--layout-fit);
+                display: block;
+                overflow: hidden;
+            }
+
+            :host #matPagesAdaptee {
+                @apply(--layout-horizontal);
+                right: auto;
+                -webkit-transition: -webkit-transform 0.33s;
+                transition: transform 0.33s;
+                width: 100%;
+                will-change: -webkit-transform, transform;
+            }
+
+            :host:not([animated]) > #matPagesAdaptee ::content > mat-page > #matPageWrapper > #matPageAdaptee:not([active]) {
+                display: none !important;
+            }
+        </style>
+
         <xp-pages context="[[self]]" id="matPagesAdaptee" default-selected="[[defaultSelected]]"
                   empty-items="{{emptyItems}}" index-attribute="[[indexAttribute]]" initialized="{{initialized}}"
                   is-mutated="{{isMutated}}" mutating="{{mutating}}" selected="{{selected}}" selecting="{{selecting}}"
                   single-item="{{singleItem}}" on-items-changed="_handleItems" on-selection-changed="_handleSelection">
             <content id="content"></content>
         </xp-pages>
+
     </template>
 
     <script>

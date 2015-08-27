@@ -74,29 +74,31 @@ The page's background color can be changed accordingly to the [Material Design p
 
 <dom-module id="mat-page">
 
-    <style>
-        :host {
-            @apply(--layout-flex);
-            display: block;
-            height: 100%;
-            overflow: auto;
-        }
-
-        :host #matPageWrapper {
-            min-height: 100%;
-        }
-
-        :host #matPageAdaptee {
-            position: static;
-        }
-    </style>
-
     <template>
+
+        <style>
+            :host {
+                @apply(--layout-flex);
+                display: block;
+                height: 100%;
+                overflow: auto;
+            }
+
+            :host #matPageWrapper {
+                min-height: 100%;
+            }
+
+            :host #matPageAdaptee {
+                position: static;
+            }
+        </style>
+
         <mat-paper id="matPageWrapper" background="[[background]]">
             <xp-page id="matPageAdaptee" active="{{active}}" closable="[[closable]]" content="[[content]]" data="{{data}}" injected="{{injected}}">
                 <content id="content"></content>
             </xp-page>
         </mat-paper>
+
     </template>
 
     <script>
