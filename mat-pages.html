@@ -51,15 +51,15 @@ by binding the `selected` attribute.
 @behavior xp-master-behavior /bower_components/xp-master-behavior/xp-master-behavior.html
 
 @dependency polymer Polymer/polymer#^1.1.0
-@dependency expandjs ExpandJS/expandjs#0.9.9
+@dependency expandjs ExpandJS/expandjs#0.9.10
 @dependency iron-flex-layout PolymerElements/iron-flex-layout#^1.0.0
-@dependency mat-paper ExpandJS/mat-paper#0.9.9
-@dependency xp-adapter-behavior ExpandJS/xp-adapter-behavior#0.9.9
-@dependency xp-master-behavior ExpandJS/xp-master-behavior#0.9.9
-@dependency xp-pages ExpandJS/xp-pages#0.9.9
+@dependency mat-paper ExpandJS/mat-paper#0.9.10
+@dependency xp-adapter-behavior ExpandJS/xp-adapter-behavior#0.9.10
+@dependency xp-master-behavior ExpandJS/xp-master-behavior#0.9.10
+@dependency xp-pages ExpandJS/xp-pages#0.9.10
 
-@devDependency mat-demo ExpandJS/mat-demo#0.9.9
-@devDependency mat-tabs ExpandJS/mat-tabs#0.9.9
+@devDependency mat-demo ExpandJS/mat-demo#0.9.10
+@devDependency mat-tabs ExpandJS/mat-tabs#0.9.10
 -->
 
 <link rel="import" href="../polymer/polymer.html">
@@ -127,19 +127,8 @@ by binding the `selected` attribute.
              * @returns {Element}
              */
             close: function (index) {
-
-                // Vars
-                var self    = this,
-                    adaptee = self.$.matPagesAdaptee,
-                    item    = self.findItem(index);
-
-                // Checking
-                if (!item || !item.closable) { return null; }
-
-                // Propagating
-                adaptee.close(index);
-
-                // Removing
+                var self = this, item = self.findItem(index);
+                if (item && item.closable) { self.$.matPagesAdaptee.close(index); } else { return null; }
                 return XP.removeChild(Polymer.dom(Polymer.dom(item).parentNode), item);
             },
 
@@ -198,7 +187,8 @@ by binding the `selected` attribute.
              */
             open: function (properties) {
                 XP.assertArgument(XP.isVoid(properties) || XP.isObject(properties), 1, 'Object');
-                return XP.appendChild(Polymer.dom(this), XP.createElement('mat-page', {properties: XP.assign({}, properties, {closable: true})}));
+                var self = this, item = XP.createElement('mat-page', {properties: XP.assign({}, properties, {closable: true})});
+                return XP.appendChild(Polymer.dom(self), item);
             },
 
             /**
@@ -424,6 +414,7 @@ by binding the `selected` attribute.
                 selection: {
                     notify: true,
                     readOnly: true,
+                    type: Object,
                     value: null
                 },
 
