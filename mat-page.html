@@ -49,14 +49,12 @@ The page's background color can be changed accordingly to the [Material Design p
 @demo http://expandjs.com/demo/mat-pages
 
 @adapts xp-page /bower_components/xp-pages/xp-page.html
-@behavior xp-adapter-behavior /bower_components/xp-adapter-behavior/xp-adapter-behavior.html
 @behavior xp-slave-behavior /bower_components/xp-slave-behavior/xp-slave-behavior.html
 
 @dependency polymer Polymer/polymer#^1.1.0
 @dependency expandjs ExpandJS/expandjs#0.9.10
 @dependency iron-flex-layout PolymerElements/iron-flex-layout#^1.0.0
 @dependency mat-paper ExpandJS/mat-paper#0.9.10
-@dependency xp-adapter-behavior ExpandJS/xp-adapter-behavior#0.9.10
 @dependency xp-pages ExpandJS/xp-pages#0.9.10
 @dependency xp-slave-behavior ExpandJS/xp-slave-behavior#0.9.10
 
@@ -68,7 +66,6 @@ The page's background color can be changed accordingly to the [Material Design p
 <link rel="import" href="../expandjs/expandjs.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../mat-paper/mat-paper.html">
-<link rel="import" href="../xp-adapter-behavior/xp-adapter-behavior.html">
 <link rel="import" href="../xp-pages/xp-page.html">
 <link rel="import" href="../xp-slave-behavior/xp-slave-behavior.html">
 
@@ -110,7 +107,6 @@ The page's background color can be changed accordingly to the [Material Design p
 
             // BEHAVIORS
             behaviors: [
-                Polymer.XPAdapterBehavior,
                 Polymer.XPSlaveBehavior
             ],
 
@@ -150,6 +146,21 @@ The page's background color can be changed accordingly to the [Material Design p
                     reflectToAttribute: true,
                     type: Boolean,
                     value: false
+                },
+
+                /**
+                 * The adapted element.
+                 *
+                 * @attribute adaptee
+                 * @type Element
+                 * @notifies
+                 * @readonly
+                 */
+                adaptee: {
+                    notify: true,
+                    readOnly: true,
+                    type: Object,
+                    value: null
                 },
 
                 /**
@@ -280,7 +291,7 @@ The page's background color can be changed accordingly to the [Material Design p
                 if (self.attributeObserver) { self.attributeObserver.disconnect(); }
 
                 // Checking
-                if (attribute) { XP.setAttribute(self.$.matPageAdaptee, attribute, self.getAttribute(attribute)); }
+                if (attribute) { XP.setAttribute(self.adaptee, attribute, self.getAttribute(attribute)); }
 
                 // Observing
                 self.attributeObserver = attribute ? XP.onMutation(self, self.mutated.bind(self), {attributes: true, attributeFilter: [attribute]}) : null;
@@ -288,7 +299,12 @@ The page's background color can be changed accordingly to the [Material Design p
 
             // LISTENER
             ready: function () {
-                this._adapt(this.$.matPageAdaptee);
+
+                // Vars
+                var self = this;
+
+                // Adapting
+                self._setAdaptee(self.$.matPageAdaptee);
             },
 
             /*********************************************************************/

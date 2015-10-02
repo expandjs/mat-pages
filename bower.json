@@ -24,7 +24,6 @@
   "dependencies": {
     "expandjs": "ExpandJS/expandjs#0.9.10",
     "mat-paper": "ExpandJS/mat-paper#0.9.10",
-    "xp-adapter-behavior": "ExpandJS/xp-adapter-behavior#0.9.10",
     "xp-master-behavior": "ExpandJS/xp-master-behavior#0.9.10",
     "xp-pages": "ExpandJS/xp-pages#0.9.10",
     "xp-slave-behavior": "ExpandJS/xp-slave-behavior#0.9.10",

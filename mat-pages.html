@@ -47,14 +47,12 @@ by binding the `selected` attribute.
 @demo http://expandjs.com/demo/mat-pages
 
 @adapts xp-pages /bower_components/xp-pages/xp-pages.html
-@behavior xp-adapter-behavior /bower_components/xp-adapter-behavior/xp-adapter-behavior.html
 @behavior xp-master-behavior /bower_components/xp-master-behavior/xp-master-behavior.html
 
 @dependency polymer Polymer/polymer#^1.1.0
 @dependency expandjs ExpandJS/expandjs#0.9.10
 @dependency iron-flex-layout PolymerElements/iron-flex-layout#^1.0.0
 @dependency mat-paper ExpandJS/mat-paper#0.9.10
-@dependency xp-adapter-behavior ExpandJS/xp-adapter-behavior#0.9.10
 @dependency xp-master-behavior ExpandJS/xp-master-behavior#0.9.10
 @dependency xp-pages ExpandJS/xp-pages#0.9.10
 
@@ -66,7 +64,6 @@ by binding the `selected` attribute.
 <link rel="import" href="../expandjs/expandjs.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../mat-paper/mat-paper.html">
-<link rel="import" href="../xp-adapter-behavior/xp-adapter-behavior.html">
 <link rel="import" href="../xp-master-behavior/xp-master-behavior.html">
 <link rel="import" href="../xp-pages/xp-pages.html">
 <link rel="import" href="mat-page.html">
@@ -113,7 +110,6 @@ by binding the `selected` attribute.
 
             // BEHAVIORS
             behaviors: [
-                Polymer.XPAdapterBehavior,
                 Polymer.XPMasterBehavior
             ],
 
@@ -128,7 +124,7 @@ by binding the `selected` attribute.
              */
             close: function (index) {
                 var self = this, item = self.findItem(index);
-                if (item && item.closable) { self.$.matPagesAdaptee.close(index); } else { return null; }
+                if (item && item.closable) { self.adaptee.close(index); } else { return null; }
                 return XP.removeChild(Polymer.dom(Polymer.dom(item).parentNode), item);
             },
 
@@ -140,7 +136,7 @@ by binding the `selected` attribute.
              * @returns {Element}
              */
             findItem: function (index) {
-                var self = this, item = self.$.matPagesAdaptee.findItem(index);
+                var self = this, item = self.adaptee.findItem(index);
                 return item && item.domHost;
             },
 
@@ -153,7 +149,7 @@ by binding the `selected` attribute.
              */
             findIndex: function (identity) {
                 var self = this, isFunction = XP.isFunction(identity), isItem = XP.includes(self.items || [], identity);
-                return isFunction || isItem ? self.$.matPagesAdaptee.findIndex(isFunction ? identity : identity.$.matPageAdaptee) : null;
+                return isFunction || isItem ? self.adaptee.findIndex(isFunction ? identity : identity.$.matPageAdaptee) : null;
             },
 
             /**
@@ -164,7 +160,7 @@ by binding the `selected` attribute.
              * @returns {boolean}
              */
             isSelectable: function (index) {
-                return this.$.matPagesAdaptee.isSelectable(index);
+                return this.adaptee.isSelectable(index);
             },
 
             /**
@@ -175,7 +171,7 @@ by binding the `selected` attribute.
              * @returns {boolean}
              */
             isSelected: function (index) {
-                return this.$.matPagesAdaptee.isSelected(index);
+                return this.adaptee.isSelected(index);
             },
 
             /**
@@ -199,7 +195,7 @@ by binding the `selected` attribute.
              * @returns {Element}
              */
             select: function (index) {
-                var self = this, item = self.$.matPagesAdaptee.select(index);
+                var self = this, item = self.adaptee.select(index);
                 return item && item.domHost;
             },
 
@@ -210,7 +206,7 @@ by binding the `selected` attribute.
              * @returns {Element}
              */
             selectNext: function () {
-                var self = this, item = self.$.matPagesAdaptee.selectNext();
+                var self = this, item = self.adaptee.selectNext();
                 return item && item.domHost;
             },
 
@@ -221,7 +217,7 @@ by binding the `selected` attribute.
              * @returns {Element}
              */
             selectPrevious: function () {
-                var self = this, item = self.$.matPagesAdaptee.selectPrevious();
+                var self = this, item = self.adaptee.selectPrevious();
                 return item && item.domHost;
             },
 
@@ -237,17 +233,16 @@ by binding the `selected` attribute.
             _animate: function() {
 
                 // Vars
-                var self    = this,
-                    adaptee = self.$.matPagesAdaptee,
-                    items   = self.items || [],
-                    index   = XP.indexOf(items, self.selection) || 0;
+                var self  = this,
+                    items = self.items || [],
+                    index = XP.indexOf(items, self.selection) || 0;
 
                 // Setting
                 self._setAnimated(true);
 
                 // Styling
-                XP.setStyle(adaptee, '-webkit-transform', 'translateX(' + (index && (-index * 100 / items.length)) + '%)');
-                XP.setStyle(adaptee, 'transform', 'translateX(' + (index && (-index * 100 / items.length)) + '%)');
+                XP.setStyle(self.adaptee, '-webkit-transform', 'translateX(' + (index && (-index * 100 / items.length)) + '%)');
+                XP.setStyle(self.adaptee, 'transform', 'translateX(' + (index && (-index * 100 / items.length)) + '%)');
 
                 // Animating
                 self._jobAnimation();
@@ -270,6 +265,21 @@ by binding the `selected` attribute.
 
             // PROPERTIES
             properties: {
+
+                /**
+                 * The adapted element.
+                 *
+                 * @attribute adaptee
+                 * @type Element
+                 * @notifies
+                 * @readonly
+                 */
+                adaptee: {
+                    notify: true,
+                    readOnly: true,
+                    type: Object,
+                    value: null
+                },
 
                 /**
                  * If set to true, the animation is running.
@@ -442,7 +452,7 @@ by binding the `selected` attribute.
 
             // LISTENER
             ready: function () {
-                this._adapt(this.$.matPagesAdaptee);
+                this._setAdaptee(this.$.matPagesAdaptee);
             },
 
             /*********************************************************************/
@@ -451,12 +461,10 @@ by binding the `selected` attribute.
             _handleItems: function () {
 
                 // Vars
-                var self    = this,
-                    adaptee = self.$.matPagesAdaptee,
-                    items   = adaptee.items || [];
+                var self = this;
 
                 // Styling
-                XP.setStyle(adaptee, 'width', (items.length * 100) + '%');
+                XP.setStyle(self.adaptee, 'width', ((self.adaptee.items || []).length * 100) + '%');
 
                 // Animating
                 self._animate();
@@ -466,12 +474,10 @@ by binding the `selected` attribute.
             _handleSelection: function () {
 
                 // Vars
-                var self      = this,
-                    adaptee   = self.$.matPagesAdaptee,
-                    selection = adaptee.selection;
+                var self = this;
 
                 // Setting
-                self._setSelection(selection && selection.domHost);
+                self._setSelection(self.adaptee.selection && self.adaptee.selection.domHost);
 
                 // Animating
                 self._animate();
