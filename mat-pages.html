@@ -461,10 +461,11 @@ by binding the `selected` attribute.
             _handleItems: function () {
 
                 // Vars
-                var self = this;
+                var self    = this,
+                    adaptee = self.$.matPagesAdaptee;
 
                 // Styling
-                XP.setStyle(self.adaptee, 'width', ((self.adaptee.items || []).length * 100) + '%');
+                XP.setStyle(adaptee, 'width', ((adaptee.items || []).length * 100) + '%');
 
                 // Animating
                 self._animate();
@@ -474,10 +475,11 @@ by binding the `selected` attribute.
             _handleSelection: function () {
 
                 // Vars
-                var self = this;
+                var self    = this,
+                    adaptee = self.$.matPagesAdaptee;
 
                 // Setting
-                self._setSelection(self.adaptee.selection && self.adaptee.selection.domHost);
+                self._setSelection(adaptee.selection && adaptee.selection.domHost);
 
                 // Animating
                 self._animate();
