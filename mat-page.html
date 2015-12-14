@@ -7,9 +7,10 @@ The complete set of contributors may be found at https://expandjs.github.io/CONT
 -->
 
 <!--
-An element is used to display a [Material Design page](http://www.google.com/design/spec/patterns/navigational-transitions.html#navigational-transitions-sibling-to-sibling).
+A custom element used to display a [Material Design page](http://www.google.com/design/spec/patterns/navigational-transitions.html#navigational-transitions-sibling-to-sibling).
 
-It must be used in conjunction with [mat-pages](http://expandjs.com/elements/mat-pages).
+It must be used in conjunction with
+[mat-pages](http://expandjs.com/elements/mat-pages).
 
 ```html
 <mat-pages>
@@ -42,60 +43,73 @@ The page's background color can be changed accordingly to the [Material Design p
 
 @element mat-page
 @description A custom element used to display a Material Design page
-@keywords material design, material page, web app, html5, expandjs, web-components
+@keywords material design, expandjs, web app, custom elements, web-components
 @group navigation
+@hot
+
 @homepage http://expandjs.com/elements/mat-page
-@repository https://github.com/ExpandJS/mat-page
+@repository https://github.com/ExpandJS/mat-pages
 @demo http://expandjs.com/demo/mat-pages
 
-@adapts xp-page /bower_components/xp-pages/xp-page.html
-@behavior xp-slave-behavior /bower_components/xp-slave-behavior/xp-slave-behavior.html
+@behavior mat-paper-behavior /bower_components/mat-paper/mat-paper-behavior.html
+@behavior xp-page-behavior /bower_components/xp-pages/xp-page-behavior.html
 
-@dependency polymer Polymer/polymer#^1.1.0
-@dependency expandjs ExpandJS/expandjs#0.9.11
+@dependency polymer Polymer/polymer#^1.2.0
+@dependency expandjs ExpandJS/expandjs#0.10.0
 @dependency iron-flex-layout PolymerElements/iron-flex-layout#^1.0.0
-@dependency mat-paper ExpandJS/mat-paper#0.9.11
-@dependency xp-pages ExpandJS/xp-pages#0.9.11
-@dependency xp-slave-behavior ExpandJS/xp-slave-behavior#0.9.11
+@dependency mat-paper ExpandJS/mat-paper#0.10.0
+@dependency mat-spacing ExpandJS/mat-spacing#0.10.0
+@dependency xp-pages ExpandJS/xp-pages#0.10.0
 
-@devDependency mat-demo ExpandJS/mat-demo#0.9.11
-@devDependency mat-tabs ExpandJS/mat-tabs#0.9.11
+@devDependency mat-demo ExpandJS/mat-demo#0.10.0
+@devDependency mat-tabs ExpandJS/mat-tabs#0.10.0
 -->
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../expandjs/expandjs.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../mat-paper/mat-paper.html">
-<link rel="import" href="../xp-pages/xp-page.html">
-<link rel="import" href="../xp-slave-behavior/xp-slave-behavior.html">
+<link rel="import" href="../mat-paper/mat-paper-behavior.html">
+<link rel="import" href="../mat-paper/mat-paper-styles.html">
+<link rel="import" href="../mat-spacing/mat-spacing.html">
+<link rel="import" href="../xp-pages/xp-page-behavior.html">
+<link rel="import" href="../xp-pages/xp-page-styles.html">
 
 <dom-module id="mat-page">
 
-    <template>
+    <template strip-whitespace>
+
+        <style include="mat-paper-styles"></style>
+        <style include="xp-page-styles"></style>
 
         <style>
             :host {
                 @apply(--layout-flex);
-                display: block;
                 height: 100%;
-                overflow-x: hidden;
-                overflow-y: auto;
             }
 
-            :host #matPageWrapper {
-                min-height: 100%;
+            :host(:not([active])) .wrapper {
+                display: none;
             }
 
-            :host #matPageAdaptee {
-                position: static;
+            :host-context([sliding]) .wrapper {
+                display: block;
+            }
+
+            :host([padding]) .wrapper {
+                @apply(--mat-padding-mobile);
+            }
+
+            /* DESKTOP */
+
+            @media (min-width: 960px) {
+
+                :host([padding]) .wrapper {
+                    @apply(--mat-padding-desktop);
+                }
             }
         </style>
 
-        <mat-paper id="matPageWrapper" background="[[background]]">
-            <xp-page id="matPageAdaptee" active="{{active}}" closable="[[closable]]" content="[[content]]" data="{{data}}" injected="{{injected}}">
-                <content id="content"></content>
-            </xp-page>
-        </mat-paper>
+        <div class="wrapper"><content></content></div>
 
     </template>
 
@@ -107,216 +121,40 @@ The page's background color can be changed accordingly to the [Material Design p
 
             // BEHAVIORS
             behaviors: [
-                Polymer.XPSlaveBehavior
+                Polymer.MatPaperBehavior,
+                Polymer.XPPageBehavior
             ],
 
             /*********************************************************************/
-
-            /**
-             * Returns the masters map.
-             *
-             * @method _setupMasters
-             * @returns {Object}
-             * @private
-             */
-            _setupMasters: function () {
-                return {selector: 'mat-pages'};
-            },
-
-            /*********************************************************************/
-
-            // LISTENERS
-            listeners: {
-                'xp-slave': '_handleSlave'
-            },
 
             // PROPERTIES
             properties: {
 
                 /**
-                 * If set to true, the page is active.
+                 * The page's brightness.
                  *
-                 * @attribute active
-                 * @type boolean
-                 * @default false
-                 * @notifies
-                 */
-                active: {
-                    notify: true,
-                    reflectToAttribute: true,
-                    type: Boolean,
-                    value: false
-                },
-
-                /**
-                 * The adapted element.
-                 *
-                 * @attribute adaptee
-                 * @type Element
-                 * @notifies
-                 * @readonly
-                 */
-                adaptee: {
-                    notify: true,
-                    readOnly: true,
-                    type: Object,
-                    value: null
-                },
-
-                /**
-                 * The paper's background color.
-                 *
-                 * @attribute background
+                 * @attribute brightness
                  * @type string
+                 * @default "transparent"
                  */
-                background: {
+                brightness: {
                     reflectToAttribute: true,
                     type: String,
-                    value: null
+                    value: 'transparent'
                 },
 
                 /**
-                 * If set to true, the page can be closed.
+                 * If set to true, the material spacing rules are applied.
                  *
-                 * @attribute closable
-                 * @type boolean
-                 * @default false
-                 * @notifies
-                 */
-                closable: {
-                    notify: true,
-                    reflectToAttribute: true,
-                    type: Boolean,
-                    value: false
-                },
-
-                /**
-                 * The `tagName` of the page's element to be injected.
-                 *
-                 * @attribute content
-                 * @type string
-                 * @notifies
-                 */
-                content: {
-                    reflectToAttribute: true,
-                    type: String,
-                    value: null
-                },
-
-                /**
-                 * The element's data
-                 *
-                 * @attribute data
-                 * @type *
-                 * @notifies
-                 */
-                data: {
-                    notifies: true,
-                    value: null
-                },
-
-                /**
-                 * The page's injected element.
-                 *
-                 * @attribute injected
-                 * @type Element
-                 * @notifies
-                 * @readonly
-                 */
-                injected: {
-                    notify: true,
-                    type: Object,
-                    value: null
-                },
-
-                /**
-                 * If set to true, the page's content will load on active.
-                 *
-                 * @attribute lazy
+                 * @attribute padding
                  * @type boolean
                  * @default false
                  */
-                lazy: {
+                padding: {
                     reflectToAttribute: true,
                     type: Boolean,
                     value: false
-                },
-
-                /**
-                 * The master selector.
-                 *
-                 * @attribute selector
-                 * @type Element
-                 * @notifies
-                 * @readonly
-                 */
-                selector: {
-                    notify: true,
-                    observer: '_selectorChanged',
-                    readOnly: true,
-                    type: Object,
-                    value: null
                 }
-            },
-
-            /*********************************************************************/
-
-            // OBSERVER
-            _selectorChanged: function (post, pre) {
-
-                // Vars
-                var self = this;
-
-                // Checking
-                if (arguments.length < 2) { return; }
-
-                // Listening
-                if (pre) { self.unlisten(pre, 'index-attribute-changed', '_handleIndexAttribute'); }
-                if (post) { self.listen(post, 'index-attribute-changed', '_handleIndexAttribute'); }
-
-                // Handling
-                self._handleIndexAttribute();
-            },
-
-            /*********************************************************************/
-
-            // LISTENER
-            mutated: function () {
-
-                // Vars
-                var self      = this,
-                    attribute = self.selector && self.selector.indexAttribute;
-
-                // Disconnecting
-                if (self.attributeObserver) { self.attributeObserver.disconnect(); }
-
-                // Checking
-                if (attribute) { XP.setAttribute(self.adaptee, attribute, self.getAttribute(attribute)); }
-
-                // Observing
-                self.attributeObserver = attribute ? XP.onMutation(self, self.mutated.bind(self), {attributes: true, attributeFilter: [attribute]}) : null;
-            },
-
-            // LISTENER
-            ready: function () {
-
-                // Vars
-                var self = this;
-
-                // Adapting
-                self._setAdaptee(self.$.matPageAdaptee);
-            },
-
-            /*********************************************************************/
-
-            // HANDLER
-            _handleIndexAttribute: function () {
-                this.mutated();
-            },
-
-            // HANDLER
-            _handleSlave: function (event) {
-                if (event.detail.firer !== this && event.detail.selector === 'mat-pages' && XP.matches(event.detail.firer, 'mat-page')) { event.stopPropagation(); }
             }
         });
     </script>

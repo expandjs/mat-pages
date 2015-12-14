@@ -7,9 +7,10 @@ The complete set of contributors may be found at https://expandjs.github.io/CONT
 -->
 
 <!--
-An element used to encapsulate and manage [Material Design pages](http://www.google.com/design/spec/patterns/navigational-transitions.html#navigational-transitions-sibling-to-sibling).
+A custom element used to manage separate [Material Design pages](http://www.google.com/design/spec/patterns/navigational-transitions.html#navigational-transitions-sibling-to-sibling).
 
-It must be used in conjunction with [mat-page](http://expandjs.com/elements/mat-page).
+It must be used in conjunction with
+[mat-page](http://expandjs.com/elements/mat-page).
 
 ```html
 <mat-pages>
@@ -39,66 +40,53 @@ by binding the `selected` attribute.
 ```
 
 @element mat-pages
-@description A custom element used to manage a series of Material Design pages
-@keywords material design, material pages, web app, html5, expandjs, web-components
+@description A custom element used to manage separate Material Design pages
+@keywords material design, expandjs, web app, custom elements, web-components
 @group navigation
+@hot
+
 @homepage http://expandjs.com/elements/mat-pages
 @repository https://github.com/ExpandJS/mat-pages
 @demo http://expandjs.com/demo/mat-pages
 
-@adapts xp-pages /bower_components/xp-pages/xp-pages.html
-@behavior xp-master-behavior /bower_components/xp-master-behavior/xp-master-behavior.html
+@behavior xp-pages-behavior /bower_components/xp-pages/xp-pages-behavior.html
 
-@dependency polymer Polymer/polymer#^1.1.0
-@dependency expandjs ExpandJS/expandjs#0.9.11
+@dependency polymer Polymer/polymer#^1.2.0
+@dependency expandjs ExpandJS/expandjs#0.10.0
 @dependency iron-flex-layout PolymerElements/iron-flex-layout#^1.0.0
-@dependency mat-paper ExpandJS/mat-paper#0.9.11
-@dependency xp-master-behavior ExpandJS/xp-master-behavior#0.9.11
-@dependency xp-pages ExpandJS/xp-pages#0.9.11
+@dependency xp-pages ExpandJS/xp-pages#0.10.0
 
-@devDependency mat-demo ExpandJS/mat-demo#0.9.11
-@devDependency mat-tabs ExpandJS/mat-tabs#0.9.11
+@devDependency mat-demo ExpandJS/mat-demo#0.10.0
+@devDependency mat-tabs ExpandJS/mat-tabs#0.10.0
 -->
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../expandjs/expandjs.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../mat-paper/mat-paper.html">
-<link rel="import" href="../xp-master-behavior/xp-master-behavior.html">
-<link rel="import" href="../xp-pages/xp-pages.html">
+<link rel="import" href="../xp-pages/xp-pages-behavior.html">
+<link rel="import" href="../xp-pages/xp-pages-styles.html">
 <link rel="import" href="mat-page.html">
 
 <dom-module id="mat-pages">
 
-    <template>
+    <template strip-whitespace>
+
+        <style include="xp-pages-styles"></style>
 
         <style>
-            :host {
-                @apply(--layout-fit);
-                display: block;
-                overflow: hidden;
-            }
-
-            :host #matPagesAdaptee {
+            :host .wrapper {
                 @apply(--layout-horizontal);
                 right: auto;
                 -webkit-transition: -webkit-transform 0.33s;
                 transition: transform 0.33s;
-                width: 100%;
-                will-change: -webkit-transform, transform;
             }
 
-            :host:not([animated]) > #matPagesAdaptee ::content > mat-page > #matPageWrapper > #matPageAdaptee:not([active]) {
-                display: none !important;
+            :host .wrapper ::content > .page:not([active]) {
+                display: block !important;
             }
         </style>
 
-        <xp-pages context="[[self]]" id="matPagesAdaptee" default-selected="[[defaultSelected]]"
-                  empty-items="{{emptyItems}}" index-attribute="[[indexAttribute]]" initialized="{{initialized}}"
-                  is-mutated="{{isMutated}}" mutating="{{mutating}}" selected="{{selected}}" selecting="{{selecting}}"
-                  single-item="{{singleItem}}" on-items-changed="_handleItems" on-selection-changed="_handleSelection">
-            <content id="content"></content>
-        </xp-pages>
+        <div class="wrapper"><content></content></div>
 
     </template>
 
@@ -110,379 +98,70 @@ by binding the `selected` attribute.
 
             // BEHAVIORS
             behaviors: [
-                Polymer.XPMasterBehavior
+                Polymer.XPPagesBehavior
             ],
 
             /*********************************************************************/
 
-            /**
-             * Closes a page.
-             *
-             * @method close
-             * @param {number | string} index
-             * @returns {Element}
-             */
-            close: function (index) {
-                var self = this, item = self.findItem(index);
-                if (item && item.closable) { self.adaptee.close(index); } else { return null; }
-                return XP.removeChild(Polymer.dom(Polymer.dom(item).parentNode), item);
-            },
-
-            /**
-             * Finds a page.
-             *
-             * @method findItem
-             * @param {number | string} index
-             * @returns {Element}
-             */
-            findItem: function (index) {
-                var self = this, item = self.adaptee.findItem(index);
-                return item && item.domHost;
-            },
-
-            /**
-             * Returns a page's index.
-             *
-             * @method findIndex
-             * @param {Element | Function} identity
-             * @returns {number | string}
-             */
-            findIndex: function (identity) {
-                var self = this, isFunction = XP.isFunction(identity), isItem = XP.includes(self.items || [], identity);
-                return isFunction || isItem ? self.adaptee.findIndex(isFunction ? identity : identity.$.matPageAdaptee) : null;
-            },
-
-            /**
-             * Checks if a page is selectable.
-             *
-             * @method isSelectable
-             * @param {number | string} index
-             * @returns {boolean}
-             */
-            isSelectable: function (index) {
-                return this.adaptee.isSelectable(index);
-            },
-
-            /**
-             * Checks if a page is selected.
-             *
-             * @method isSelected
-             * @param {number | string} index
-             * @returns {boolean}
-             */
-            isSelected: function (index) {
-                return this.adaptee.isSelected(index);
-            },
-
-            /**
-             * Opens a page.
-             *
-             * @method open
-             * @param {Object} [properties]
-             * @returns {Element}
-             */
-            open: function (properties) {
-                XP.assertArgument(XP.isVoid(properties) || XP.isObject(properties), 1, 'Object');
-                var self = this, item = XP.createElement('mat-page', {properties: XP.assign({}, properties, {closable: true})});
-                return XP.appendChild(Polymer.dom(self), item);
-            },
-
-            /**
-             * Selects a page.
-             *
-             * @method select
-             * @param {number | string} index
-             * @returns {Element}
-             */
-            select: function (index) {
-                var self = this, item = self.adaptee.select(index);
-                return item && item.domHost;
-            },
-
-            /**
-             * Selects the next page.
-             *
-             * @method selectNext
-             * @returns {Element}
-             */
-            selectNext: function () {
-                var self = this, item = self.adaptee.selectNext();
-                return item && item.domHost;
-            },
-
-            /**
-             * Selects the previous page.
-             *
-             * @method selectPrevious
-             * @returns {Element}
-             */
-            selectPrevious: function () {
-                var self = this, item = self.adaptee.selectPrevious();
-                return item && item.domHost;
-            },
-
-            /*********************************************************************/
-
-            /**
-             * Animates the pages.
-             *
-             * @method _animate
-             * @returns {Element}
-             * @private
-             */
-            _animate: function() {
-
-                // Vars
-                var self  = this,
-                    items = self.items || [],
-                    index = XP.indexOf(items, self.selection) || 0;
-
-                // Setting
-                self._setAnimated(true);
-
-                // Styling
-                XP.setStyle(self.adaptee, '-webkit-transform', 'translateX(' + (index && (-index * 100 / items.length)) + '%)');
-                XP.setStyle(self.adaptee, 'transform', 'translateX(' + (index && (-index * 100 / items.length)) + '%)');
-
-                // Animating
-                self._jobAnimation();
-
-                return self;
-            },
-
-            /**
-             * Returns the slaves map.
-             *
-             * @method _setupSlaves
-             * @returns {Object}
-             * @private
-             */
-            _setupSlaves: function () {
-                return {items: 'mat-page'};
-            },
-
-            /*********************************************************************/
+            // OBSERVERS
+            observers: [
+                '_selectionChanged(items.*, selection, wrapper)'
+            ],
 
             // PROPERTIES
             properties: {
 
                 /**
-                 * The adapted element.
+                 * The tag used to append new items.
                  *
-                 * @attribute adaptee
-                 * @type Element
-                 * @notifies
+                 * @attribute item-tag
+                 * @type string
+                 * @default "mat-page"
                  * @readonly
                  */
-                adaptee: {
-                    notify: true,
+                itemTag: {
                     readOnly: true,
-                    type: Object,
-                    value: null
+                    type: String,
+                    value: 'mat-page'
                 },
 
                 /**
-                 * If set to true, the animation is running.
+                 * If set to true, the pages are sliding.
                  *
-                 * @attribute animated
+                 * @attribute sliding
                  * @type boolean
                  * @default false
                  * @notifies
                  * @readonly
                  */
-                animated: {
+                sliding: {
                     notify: true,
                     readOnly: true,
                     reflectToAttribute: true,
                     type: Boolean,
                     value: false
-                },
-
-                /**
-                 * The name of the page selected by default.
-                 *
-                 * @attribute default-selected
-                 * @type number | string
-                 */
-                defaultSelected: {
-                    value: null
-                },
-
-                /**
-                 * If set to true, there are no items.
-                 *
-                 * @attribute empty-items
-                 * @type boolean
-                 * @notifies
-                 * @readonly
-                 */
-                emptyItems: {
-                    notify: true,
-                    reflectToAttribute: true,
-                    type: Boolean
-                },
-
-                /**
-                 * The attribute used as index.
-                 *
-                 * @attribute index-attribute
-                 * @type string
-                 */
-                indexAttribute: {
-                    reflectToAttribute: true,
-                    type: String,
-                    value: null
-                },
-
-                /**
-                 * If set to true, the selector is initialized.
-                 *
-                 * @attribute initialized
-                 * @type boolean
-                 * @notifies
-                 * @readonly
-                 */
-                initialized: {
-                    notify: true,
-                    type: Boolean
-                },
-
-                /**
-                 * If set to true, the mutation observer is set.
-                 *
-                 * @attribute is-mutated
-                 * @type boolean
-                 * @notifies
-                 * @readonly
-                 */
-                isMutated: {
-                    notify: true,
-                    type: Boolean
-                },
-
-                /**
-                 * The selectable pages.
-                 *
-                 * @attribute items
-                 * @type Array
-                 * @notifies
-                 * @readonly
-                 */
-                items: {
-                    notify: true,
-                    readOnly: true,
-                    type: Array,
-                    value: function () { return []; }
-                },
-
-                /**
-                 * If set to true, the selector is currently mutating.
-                 *
-                 * @attribute mutating
-                 * @type boolean
-                 * @notifies
-                 * @readonly
-                 */
-                mutating: {
-                    notify: true,
-                    type: Boolean
-                },
-
-                /**
-                 * The selected page's index.
-                 *
-                 * @attribute selected
-                 * @type number | string
-                 * @notifies
-                 */
-                selected: {
-                    notify: true,
-                    value: null
-                },
-
-                /**
-                 * If set to true, the selection is about to change.
-                 *
-                 * @attribute selecting
-                 * @type boolean
-                 * @notifies
-                 * @readonly
-                 */
-                selecting: {
-                    notify: true,
-                    type: Boolean
-                },
-
-                /**
-                 * The selected page.
-                 *
-                 * @attribute selection
-                 * @type Element
-                 * @notifies
-                 * @readonly
-                 */
-                selection: {
-                    notify: true,
-                    readOnly: true,
-                    type: Object,
-                    value: null
-                },
-
-                /**
-                 * If set to true, there's only one item.
-                 *
-                 * @attribute single-item
-                 * @type boolean
-                 * @notifies
-                 * @readonly
-                 */
-                singleItem: {
-                    notify: true,
-                    reflectToAttribute: true,
-                    type: Boolean
                 }
             },
 
             /*********************************************************************/
 
-            // LISTENER
-            created: function () {
-                this._jobAnimation = XP.debounce(this._setAnimated.bind(this, false), 330);
-            },
-
-            // LISTENER
-            ready: function () {
-                this._setAdaptee(this.$.matPagesAdaptee);
-            },
-
-            /*********************************************************************/
-
-            // HANDLER
-            _handleItems: function () {
+            // OBSERVER
+            _selectionChanged: function() {
 
                 // Vars
-                var self    = this,
-                    adaptee = self.$.matPagesAdaptee;
-
-                // Styling
-                XP.setStyle(adaptee, 'width', ((adaptee.items || []).length * 100) + '%');
-
-                // Animating
-                self._animate();
-            },
-
-            // HANDLER
-            _handleSelection: function () {
-
-                // Vars
-                var self    = this,
-                    adaptee = self.$.matPagesAdaptee;
+                var self  = this,
+                    items = self.items || [],
+                    index = (self.wrapper && XP.indexOf(items, self.selection)) || 0;
 
                 // Setting
-                self._setSelection(adaptee.selection && adaptee.selection.domHost);
+                self._setSliding(true);
 
-                // Animating
-                self._animate();
+                // Styling
+                self.wrapper.style.transform = self.wrapper.style.webkitTransform = 'translateX(' + (index && (-index * 100 / items.length)) + '%)';
+                self.wrapper.style.width     = (items.length * 100) + '%';
+
+                // Debouncing
+                self.debounce('sliding', self._setSliding.bind(self, false), 330);
             }
         });
     </script>
