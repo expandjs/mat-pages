@@ -74,19 +74,23 @@ by binding the `selected` attribute.
         <style include="xp-pages-styles"></style>
 
         <style>
-            :host .wrapper {
+            :host .slider {
                 @apply(--layout-horizontal);
+                @apply(--layout-fit);
                 right: auto;
-                -webkit-transition: -webkit-transform 0.33s;
                 transition: transform 0.33s;
             }
 
-            :host .wrapper ::content > .page:not([active]) {
+            :host .slider ::content > .page:not([active]) {
                 display: block !important;
             }
         </style>
 
-        <div class="wrapper"><content></content></div>
+        <div class="wrapper">
+            <div class="slider">
+                <content></content>
+            </div>
+        </div>
 
     </template>
 
@@ -105,7 +109,7 @@ by binding the `selected` attribute.
 
             // OBSERVERS
             observers: [
-                '_selectionChanged(items.*, selection, wrapper)'
+                '_selectionChanged(items.*, selection, slider)'
             ],
 
             // PROPERTIES
@@ -123,6 +127,19 @@ by binding the `selected` attribute.
                     readOnly: true,
                     type: String,
                     value: 'mat-page'
+                },
+
+                /**
+                 * The pages slider.
+                 *
+                 * @attribute slider
+                 * @type Element
+                 * @notifies
+                 * @readonly
+                 */
+                slider: {
+                    notify: true,
+                    readOnly: true
                 },
 
                 /**
@@ -151,17 +168,26 @@ by binding the `selected` attribute.
                 // Vars
                 var self  = this,
                     items = self.items || [],
-                    index = (self.wrapper && XP.indexOf(items, self.selection)) || 0;
+                    index = XP.indexOf(items, self.selection) || 0;
 
                 // Setting
                 self._setSliding(true);
 
                 // Styling
-                self.wrapper.style.transform = self.wrapper.style.webkitTransform = 'translateX(' + (index && (-index * 100 / items.length)) + '%)';
-                self.wrapper.style.width     = (items.length * 100) + '%';
+                self.slider.style.transform = 'translateX(' + (index && (-index * 100 / items.length)) + '%)';
+                self.slider.style.width     = (items.length * 100) + '%';
 
                 // Debouncing
                 self.debounce('sliding', self._setSliding.bind(self, false), 330);
+            },
+
+            /*********************************************************************/
+
+            // LISTENER
+            ready: function () {
+
+                // Setting
+                this._setSlider(Polymer.dom(this.root).querySelector('.slider'));
             }
         });
     </script>
